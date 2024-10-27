@@ -15,6 +15,15 @@ require_relative "lib/chromate"
 
 namespace :chromate do
   namespace :test do
+    task :open do
+      browser = Chromate::Browser.new(headless: false)
+      browser.start
+      browser.navigate_to("https://2captcha.com/fr/demo/recaptcha-v2")
+      element = browser.find_element("#root")
+      binding.irb
+      browser.stop
+    end
+
     task :pixelscan do
       browser = Chromate::Browser.new
       browser.start
