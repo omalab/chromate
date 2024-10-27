@@ -30,7 +30,7 @@ module Chromate
         puts "Erreur WebSocket : #{e.message}"
       end
 
-      @ws.on :close do |e|
+      @ws.on :close do |_e|
         puts 'Connexion WebSocket fermée'
       end
 
@@ -64,7 +64,7 @@ module Chromate
     end
 
     def close
-      @ws.close
+      @ws&.close
     end
 
     def handle_message(message)

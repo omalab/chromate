@@ -16,10 +16,10 @@ module Chromate
       # @param [Integer] to_y
       # @option [Float] duration
       # @option [Integer] steps
-      def move_to(to_x, to_y, duration: 1.0, steps: 50)
+      def move_to(to_x, to_y, duration: rand(0.1..1), steps: 50)
         start_x = @mouse_position[:x]
         start_y = @mouse_position[:y]
-        points = bezier_curve(start_x, start_y, to_x, to_y, (to_x / 2), (to_y / 2), steps)
+        points = bezier_curve(start_x, start_y, to_x, to_y, steps)
 
         points.each do |point|
           dispatch_mouse_event('mouseMoved', point[:x], point[:y])
@@ -27,14 +27,14 @@ module Chromate
         end
 
         # Update mouse position
-        @mouse_position[:x] = x
-        @mouse_position[:y] = y
+        @mouse_position[:x] = points.last[:x]
+        @mouse_position[:y] = points.last[:y]
       end
 
       # @param to_x [Integer]
       # @param to_y [Integer]
       def click(to_x, to_y)
-        steps     = rand(5..18).to_a.sample
+        steps     = rand(5..18)
         duration  = steps * rand(0.01..0.05)
 
         move_to(to_x, to_y, duration: duration, steps: steps)

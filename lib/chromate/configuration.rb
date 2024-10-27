@@ -62,7 +62,7 @@ module Chromate
       dynamic_args << "--headless=#{@headless}" unless @headless == false
 
       # Configurer le serveur proxy s'il est défini
-      dynamic_args << "--proxy-server=#{@proxy[:host]}:#{@proxy[:port]}" if @proxy&.dig(:host) && @proxy&.dig(:port)
+      dynamic_args << "--proxy-server=#{@proxy[:host]}:#{@proxy[:port]}" if @proxy&.dig(:host) && @proxy[:port]
 
       # Construire le flag disable-features avec les fonctionnalités à désactiver
       dynamic_args << "--disable-features=#{@disable_features.join(",")}" unless @disable_features.empty?

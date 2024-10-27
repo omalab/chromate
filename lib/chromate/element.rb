@@ -22,6 +22,29 @@ module Chromate
       @html = @html['outerHTML']
     end
 
+    def bounding_box
+      return @bounding_box if @bounding_box
+
+      result = client.send_message('DOM.getBoxModel', objectId: @id)
+      @bounding_box = result['model']
+    end
+
+    def x
+      bounding_box['content'][0]
+    end
+
+    def y
+      bounding_box['content'][1]
+    end
+
+    def width
+      bounding_box['width']
+    end
+
+    def height
+      bounding_box['height']
+    end
+
     private
 
     # @return [String]

@@ -4,27 +4,19 @@ module Chromate
   module Actions
     module Dom
       def find_element(selector)
-        # Récupérer l'ID du document racine
-        document = @client.send_message('DOM.getDocument')
-        root_id = document['root']['nodeId']
-
-        # Chercher l'élément avec `DOM.querySelector`
-        result = @client.send_message('DOM.querySelector', nodeId: root_id, selector: selector)
-
-        raise "Élément non trouvé avec le sélecteur : #{selector}" unless result['nodeId']
-
-        # Obtenir l'objectId pour interagir avec l'élément
-        node_info = @client.send_message('DOM.resolveNode', nodeId: result['nodeId'])
-        raise "Impossible de résoudre l'élément avec le sélecteur : #{selector}" unless node_info['object']
-
-        node_info['object']['objectId']
+        Chromate::Element.new(selector, @client)
       end
 
       def click_element(selector)
-        object_id = find_element(selector)
+        element = find_element(selector)
+        controller = Chromate::Native::MouseController.new(@client)
+        controller.click(element.x, element.y)
+      end
 
-        # Utiliser `Runtime.callFunctionOn` pour cliquer sur l'élément
-        @client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { this.click(); }', objectId: object_id)
+      def hover_element(selector)
+        element = find_element(selector)
+        controller = Chromate::Native::MouseController.new(@client)
+        controller.move_to(element.x, element.y)
       end
 
       def type_text(selector, text)

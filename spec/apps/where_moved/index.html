@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Traceur de souris avec boutons</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            position: relative;
+        }
+        canvas {
+            display: block;
+        }
+        .color-button {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+        }
+        #red {
+            background-color: red;
+            top: 20px;
+            left: 20px;
+        }
+        #blue {
+            background-color: blue;
+            top: 20px;
+            right: 20px;
+        }
+        #green {
+            background-color: green;
+            bottom: 20px;
+            left: 20px;
+        }
+        #yellow {
+            background-color: yellow;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="tracer"></canvas>
+    
+    <button id="red" class="color-button"></button>
+    <button id="blue" class="color-button"></button>
+    <button id="green" class="color-button"></button>
+    <button id="yellow" class="color-button"></button>
+
+    <script>
+        const canvas = document.getElementById('tracer');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+
+        let previousPosition = null;
+
+        function draw(event) {
+            if (previousPosition !== null) {
+                ctx.beginPath();
+                ctx.moveTo(previousPosition.x, previousPosition.y);
+                ctx.lineTo(event.clientX, event.clientY);
+                ctx.stroke();
+            }
+            previousPosition = { x: event.clientX, y: event.clientY };
+        }
+
+        function resetPosition() {
+            previousPosition = null;
+        }
+
+        // Commencer le tracé dès que la souris entre dans le canvas
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseleave', resetPosition);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            resetPosition();
+        });
+    </script>
+</body>
+</html>

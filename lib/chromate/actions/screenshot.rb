@@ -3,25 +3,10 @@
 module Chromate
   module Actions
     module Screenshot
-      def screenshot(options = {})
-        default_options = {
-          format: 'png',
-          fromSurface: true
-        }
-
-        params = default_options.merge(options)
-
-        @client.send_message('Page.enable')
-
-        result = @client.send_message('Page.captureScreenshot', params)
-
-        image_data = result['data']
-        Base64.decode64(image_data)
-      end
-
       def screenshot_to_file(file_path, options = {})
         image_data = screenshot(options)
         File.binwrite(file_path, image_data)
+        true
       end
 
       def screenshot_full_page(file_path, options = {})
@@ -41,6 +26,25 @@ module Chromate
         screenshot_to_file(file_path, options)
 
         @client.send_message('Emulation.clearDeviceMetricsOverride')
+        true
+      end
+
+      private
+
+      def screenshot(options = {})
+        default_options = {
+          format: 'png',
+          fromSurface: true
+        }
+
+        params = default_options.merge(options)
+
+        @client.send_message('Page.enable')
+
+        result = @client.send_message('Page.captureScreenshot', params)
+
+        image_data = result['data']
+        Base64.decode64(image_data)
       end
     end
   end

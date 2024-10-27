@@ -6,10 +6,12 @@ require 'securerandom'
 require 'net/http'
 require 'websocket-client-simple'
 require_relative 'client'
+require_relative 'element'
 require_relative 'user_agent'
 require_relative 'actions/navigate'
 require_relative 'actions/screenshot'
 require_relative 'actions/dom'
+require_relative 'native/mouse_controller'
 
 module Chromate
   class Browser
@@ -62,6 +64,7 @@ module Chromate
       sleep 2
 
       @client.start
+      self
     end
 
     def stop
