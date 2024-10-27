@@ -19,6 +19,7 @@ namespace :chromate do
       browser = Chromate::Browser.new(headless: false)
       browser.start
       browser.navigate_to("https://2captcha.com/fr/demo/recaptcha-v2")
+      sleep 2
       element = browser.find_element("#root")
       binding.irb
       browser.stop
