@@ -2,22 +2,37 @@
 
 module Chromate
   class Element
-    class NotFoundError < StandardError; end
-    class InvalidSelectorError < StandardError; end
+    class NotFoundError < StandardError
+      def initialize(selector, root_id)
+        super("Element not found with selector: #{selector} under root_id: #{root_id}")
+      end
+    end
+
+    class InvalidSelectorError < StandardError
+      def initialize(selector)
+        super("Unable to resolve element with selector: #{selector}")
+      end
+    end
     attr_reader :selector, :client, :mouse
 
     # @param [String] selector
     # @param [Chromate::Client] client
-    def initialize(selector, client)
-      @selector = selector
-      @client   = client
-      @object_id, @node_id = find
-      @root_id  = document['root']['nodeId']
+    # @option [Integer] node_id
+    # @option [String] object_id
+    # @option [Integer] root_id
+    def initialize(selector, client, node_id: nil, object_id: nil, root_id: nil)
+      @selector   = selector
+      @client     = client
+      @object_id  = object_id
+      @node_id    = node_id
+      @object_id, @node_id = find(selector, root_id) unless @object_id && @node_id
+      @root_id  = root_id || document['root']['nodeId']
       @mouse    = Native::MouseController.new(client)
     end
 
     def inspect
-      "#<Chromate::Element:#{selector}>"
+      value = selector.length > 20 ? "#{selector[0..20]}..." : selector
+      "#<Chromate::Element:#{value}>"
     end
 
     # @return [String]
@@ -78,16 +93,33 @@ module Chromate
       self
     end
 
+    # @return [Chromate::Element]
+    def find_element(selector)
+      find_elements(selector, max: 1).first
+    end
+
+    # @return [Array<Chromate::Element>]
+    def find_elements(selector, max: 0)
+      results = client.send_message('DOM.querySelectorAll', nodeId: @node_id, selector: selector)
+      results['nodeIds'].each_with_index.filter_map do |node_id, idx|
+        node_info = client.send_message('DOM.resolveNode', nodeId: node_id)
+        next unless node_info['object']
+        break if max.positive? && idx >= max
+
+        Element.new(selector, client, node_id: node_id, object_id: node_info['object']['objectId'], root_id: @node_id)
+      end
+    end
+
     private
 
-    # @return [String]
-    def find
-      @root_id  = document['root']['nodeId']
+    # @return [Array] [object_id, node_id]
+    def find(selector, root_id = nil)
+      @root_id  = root_id || document['root']['nodeId']
       result    = client.send_message('DOM.querySelector', nodeId: @root_id, selector: selector)
-      raise NotFoundError, "Element not found with selector: #{selector}" unless result&.dig('nodeId')
+      raise NotFoundError.new(selector, @root_id) unless result['nodeId']
 
       node_info = client.send_message('DOM.resolveNode', nodeId: result['nodeId'])
-      raise InvalidSelectorError, "Unable to resolve element with selector: #{selector}" unless node_info&.dig('object')
+      raise InvalidSelectorError, selector unless node_info['object']
 
       [node_info['object']['objectId'], result['nodeId']]
     end
