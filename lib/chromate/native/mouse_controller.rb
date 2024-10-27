@@ -5,45 +5,56 @@ module Chromate
     class MouseController
       attr_accessor :client
 
+      # @attr [Hash] mouse_position
+      # @param [Chromate::Client] client
       def initialize(client)
         @client = client
         @mouse_position = { x: 0, y: 0 }
       end
 
-      # Déplacer la souris de manière fluide et précise vers une position (x, y)
-      def move_to(x, y, duration: 1.0, steps: 50)
+      # @param [Integer] to_x
+      # @param [Integer] to_y
+      # @option [Float] duration
+      # @option [Integer] steps
+      def move_to(to_x, to_y, duration: 1.0, steps: 50)
         start_x = @mouse_position[:x]
         start_y = @mouse_position[:y]
-        dx = (x - start_x) / steps.to_f
-        dy = (y - start_y) / steps.to_f
+        points = bezier_curve(start_x, start_y, to_x, to_y, (to_x / 2), (to_y / 2), steps)
 
-        steps.times do |step|
-          new_x = start_x + (dx * (step + 1))
-          new_y = start_y + (dy * (step + 1))
-          dispatch_mouse_event('mouseMoved', new_x, new_y)
+        points.each do |point|
+          dispatch_mouse_event('mouseMoved', point[:x], point[:y])
           sleep(duration / steps)
         end
 
-        # Mise à jour de la position de la souris
+        # Update mouse position
         @mouse_position[:x] = x
         @mouse_position[:y] = y
       end
 
-      # Simuler un clic à une position donnée (x, y)
-      def click(x, y)
-        move_to(x, y, duration: 0.2, steps: 10)
-        dispatch_mouse_event('mousePressed', x, y, button: 'left', click_count: 1)
-        dispatch_mouse_event('mouseReleased', x, y, button: 'left', click_count: 1)
+      # @param to_x [Integer]
+      # @param to_y [Integer]
+      def click(to_x, to_y)
+        steps     = rand(5..18).to_a.sample
+        duration  = steps * rand(0.01..0.05)
+
+        move_to(to_x, to_y, duration: duration, steps: steps)
+        dispatch_mouse_event('mousePressed', to_x, to_y, button: 'left', click_count: 1)
+        sleep(rand(0.01..0.1))
+        dispatch_mouse_event('mouseReleased', to_x, to_y, button: 'left', click_count: 1)
       end
 
       private
 
-      # Méthode d'envoi des événements de souris à CDP
-      def dispatch_mouse_event(type, x, y, button: 'none', click_count: 0)
+      # @param [String] type mouseMoved, mousePressed, mouseReleased
+      # @param [Integer] target_x
+      # @param [Integer] target_y
+      # @option [String] button
+      # @option [Integer] click_count
+      def dispatch_mouse_event(type, target_x, target_y, button: 'none', click_count: 0)
         params = {
           type: type,
-          x: x,
-          y: y,
+          x: target_x,
+          y: target_y,
           button: button,
           clickCount: click_count,
           deltaX: 0,
@@ -52,7 +63,20 @@ module Chromate
           timestamp: (Time.now.to_f * 1000).to_i
         }
 
-        @client.send_message('Input.dispatchMouseEvent', params)
+        client.send_message('Input.dispatchMouseEvent', params)
+      end
+
+      def bezier_curve(from_x, from_y, to_x, to_y, steps = 50)
+        control_x = (to_x / 2)
+        control_y = (to_y / 2)
+
+        (0..steps).map do |t|
+          t /= steps.to_f
+          # Compute the position on the quadratic Bezier curve
+          new_x = (((1 - t)**2) * from_x) + (2 * (1 - t) * t * control_x) + ((t**2) * to_x)
+          new_y = (((1 - t)**2) * from_y) + (2 * (1 - t) * t * control_y) + ((t**2) * to_y)
+          { x: new_x, y: new_y }
+        end
       end
     end
   end
