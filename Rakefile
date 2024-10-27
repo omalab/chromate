@@ -44,9 +44,12 @@ namespace :chromate do
     end
 
     task :cloudflare do
+      Chromate.configure do |config|
+        config.headless = false
+      end
       browser = Chromate::Browser.new
       browser.start
-      browser.navigate_to("https://dash.cloudflare.com/login")
+      browser.navigate_to("https://2captcha.com/fr/demo/cloudflare-turnstile-challenge")
       sleep 10
       browser.screenshot_to_file("results/cloudflare.png")
       browser.stop

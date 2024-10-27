@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ['Eth3rnit3']
   spec.email = ['eth3rnit3@gmail.com']
 
-  spec.summary = 'Write a short summary, because RubyGems requires one.'
-  spec.description = 'Write a longer description or delete this line.'
+  spec.summary = 'Chromate is a Ruby library to control Google Chrome with the Chrome DevTools Protocol.'
+  spec.description = 'Chromate is a Ruby library to control Google Chrome with the Chrome DevTools Protocol.'
   spec.homepage = 'http://github.com/Eth3rnit3/chromate'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.0.0'
@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
+  spec.add_dependency 'ffi', '~> 1.17.0'
   spec.add_dependency 'websocket-client-simple', '~> 0.8.0'
 
   # For more information and examples about making a new gem, check out our

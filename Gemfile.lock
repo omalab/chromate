@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     chromate (0.1.0)
+      ffi (~> 1.17.0)
       websocket-client-simple (~> 0.8.0)
 
 GEM
@@ -10,6 +11,8 @@ GEM
     ast (2.4.2)
     diff-lcs (1.5.1)
     event_emitter (0.2.6)
+    ffi (1.17.0)
+    ffi (1.17.0-x86_64-darwin)
     json (2.7.4)
     language_server-protocol (3.17.0.3)
     parallel (1.26.3)
