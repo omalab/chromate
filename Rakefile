@@ -25,11 +25,14 @@ namespace :chromate do
     end
 
     task :brotector do
+      require "chromate/native/mouse_controller"
       browser = Chromate::Browser.new
       browser.start
       browser.navigate_to("https://kaliiiiiiiiii.github.io/brotector?crash=false")
       sleep 2
-      browser.click_element("#clickHere")
+      # browser.click_element("#clickHere")
+      mouse = Chromate::Native::MouseController.new(browser.client)
+      mouse.click(100, 100)
       browser.screenshot_to_file("results/brotector.png")
       browser.stop
     end

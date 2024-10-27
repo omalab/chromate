@@ -1,111 +1,58 @@
 # frozen_string_literal: true
 
-require 'ffi'
-module FFI
-  module X11
-    extend FFI::Library
-    ffi_lib 'libX11.so'
-    ffi_lib 'libXtst.so'
-
-    # Fonction pour ouvrir une connexion avec le serveur X
-    attach_function :XOpenDisplay, [:string], :pointer
-    attach_function :XCloseDisplay, [:pointer], :int
-
-    # Fonction pour obtenir la fenêtre racine par défaut
-    attach_function :XDefaultRootWindow, [:pointer], :ulong
-
-    # Fonction pour définir l'input focus
-    attach_function :XSetInputFocus, %i[pointer ulong int int], :int
-
-    # Fonction pour déplacer la souris
-    attach_function :XTestFakeMotionEvent, %i[pointer int int int ulong], :int
-
-    # Fonction pour simuler un événement de clic
-    attach_function :XTestFakeButtonEvent, %i[pointer uint bool ulong], :int
-
-    # Fonction pour obtenir la position de la souris
-    attach_function :XQueryPointer, %i[pointer ulong pointer pointer pointer pointer pointer pointer pointer], :bool
-
-    # Fonction pour forcer l'envoi des événements X
-    attach_function :XFlush, [:pointer], :int
-  end
-end
-
 module Chromate
   module Native
     class MouseController
-      X_MIN = 10
-      Y_MIN = 100
-      X_MAX = 1920
-      Y_MAX = 1080
+      attr_accessor :client
 
-      def initialize
-        @display = FFI::X11.XOpenDisplay(nil)
-        raise 'Cannot open display' if @display.null?
+      def initialize(client)
+        @client = client
+        @mouse_position = { x: 0, y: 0 }
       end
 
-      def set_focus
-        root_window = FFI::X11.XDefaultRootWindow(@display)
-        FFI::X11.XSetInputFocus(@display, root_window, 1, 0)
-        FFI::X11.XFlush(@display)
-      end
+      # Déplacer la souris de manière fluide et précise vers une position (x, y)
+      def move_to(x, y, duration: 1.0, steps: 50)
+        start_x = @mouse_position[:x]
+        start_y = @mouse_position[:y]
+        dx = (x - start_x) / steps.to_f
+        dy = (y - start_y) / steps.to_f
 
-      def get_mouse_position
-        root_window = FFI::X11.XDefaultRootWindow(@display)
-        root_return = FFI::MemoryPointer.new(:ulong)
-        child_return = FFI::MemoryPointer.new(:ulong)
-        root_x = FFI::MemoryPointer.new(:int)
-        root_y = FFI::MemoryPointer.new(:int)
-        win_x = FFI::MemoryPointer.new(:int)
-        win_y = FFI::MemoryPointer.new(:int)
-        mask_return = FFI::MemoryPointer.new(:uint)
-
-        FFI::X11.XQueryPointer(
-          @display, root_window, root_return, child_return,
-          root_x, root_y, win_x, win_y, mask_return
-        )
-
-        { x: root_x.read_int, y: root_y.read_int }
-      end
-
-      def move_mouse(target_x, target_y, steps = 50)
-        current_pos = get_mouse_position
-        delta_x = (target_x - current_pos[:x]).to_f / steps
-        delta_y = (target_y - current_pos[:y]).to_f / steps
-
-        steps.times do |i|
-          new_x = current_pos[:x] + (delta_x * (i + 1)).round
-          new_y = current_pos[:y] + (delta_y * (i + 1)).round
-
-          FFI::X11.XTestFakeMotionEvent(@display, 0, new_x, new_y, 0)
-          FFI::X11.XFlush(@display)
-          sleep(0.01) # Ajout d'un léger délai pour simuler un mouvement naturel
+        steps.times do |step|
+          new_x = start_x + (dx * (step + 1))
+          new_y = start_y + (dy * (step + 1))
+          dispatch_mouse_event('mouseMoved', new_x, new_y)
+          sleep(duration / steps)
         end
+
+        # Mise à jour de la position de la souris
+        @mouse_position[:x] = x
+        @mouse_position[:y] = y
       end
 
-      def click(button = 1)
-        FFI::X11.XTestFakeButtonEvent(@display, button, true, 0)
-        FFI::X11.XFlush(@display)
-        sleep(0.05)
-        FFI::X11.XTestFakeButtonEvent(@display, button, false, 0)
-        FFI::X11.XFlush(@display)
+      # Simuler un clic à une position donnée (x, y)
+      def click(x, y)
+        move_to(x, y, duration: 0.2, steps: 10)
+        dispatch_mouse_event('mousePressed', x, y, button: 'left', click_count: 1)
+        dispatch_mouse_event('mouseReleased', x, y, button: 'left', click_count: 1)
       end
 
-      def move_and_click(bounding_box)
-        el_x = bounding_box['x'].to_i
-        el_y = bounding_box['y'].to_i
-        el_width = bounding_box['width'].to_i
-        el_height = bounding_box['height'].to_i
+      private
 
-        target_x = el_x + X_MIN + (el_width / 2)
-        target_y = el_y + Y_MIN + (el_height / 2)
+      # Méthode d'envoi des événements de souris à CDP
+      def dispatch_mouse_event(type, x, y, button: 'none', click_count: 0)
+        params = {
+          type: type,
+          x: x,
+          y: y,
+          button: button,
+          clickCount: click_count,
+          deltaX: 0,
+          deltaY: 0,
+          modifiers: 0,
+          timestamp: (Time.now.to_f * 1000).to_i
+        }
 
-        move_mouse(target_x, target_y)
-        click
-      end
-
-      def close
-        FFI::X11.XCloseDisplay(@display)
+        @client.send_message('Input.dispatchMouseEvent', params)
       end
     end
   end

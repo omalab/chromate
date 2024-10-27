@@ -13,6 +13,8 @@ require_relative 'actions/dom'
 
 module Chromate
   class Browser
+    attr_reader :client
+
     include Actions::Navigate
     include Actions::Screenshot
     include Actions::Dom
