@@ -4,6 +4,10 @@ require 'websocket-client-simple'
 
 module Chromate
   class Client
+    def self.listeners
+      @@listeners ||= [] # rubocop:disable Style/ClassVars
+    end
+
     attr_reader :port, :ws
 
     def initialize(options = {})
@@ -19,7 +23,12 @@ module Chromate
       client_self = self
 
       @ws.on :message do |msg|
-        client_self.handle_message(JSON.parse(msg.data))
+        message = JSON.parse(msg.data)
+        client_self.handle_message(message)
+
+        Client.listeners.each do |listener|
+          listener.call(message)
+        end
       end
 
       @ws.on :open do
@@ -73,6 +82,11 @@ module Chromate
 
       @callbacks[message['id']].push(message['result'])
       @callbacks.delete(message['id'])
+    end
+
+    # Permet aux différentes parties de s'abonner aux messages WebSocket
+    def on_message(&block)
+      Client.listeners << block
     end
 
     def fetch_websocket_debug_url
