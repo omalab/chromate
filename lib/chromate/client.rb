@@ -4,7 +4,7 @@ require 'websocket-client-simple'
 
 module Chromate
   class Client
-    attr_reader :port
+    attr_reader :port, :ws
 
     def initialize(options = {})
       @port = options[:port] || find_available_port

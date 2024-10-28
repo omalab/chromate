@@ -8,33 +8,27 @@ module Chromate
       end
 
       def click_element(selector)
-        element = find_element(selector)
-        controller = Chromate::Native::MouseController.new(@client)
-        controller.click(element.x, element.y)
+        find_element(selector).click
       end
 
       def hover_element(selector)
-        element = find_element(selector)
-        controller = Chromate::Native::MouseController.new(@client)
-        controller.move_to(element.x, element.y)
+        find_element(selector).hover
       end
 
       def type_text(selector, text)
-        object_id = find_element(selector)
-        @client.send_message('Runtime.callFunctionOn', functionDeclaration: "function(value) { this.value = value; this.dispatchEvent(new Event('input')); }",
-                                                       objectId: object_id, arguments: [{ value: text }])
+        find_element(selector).type(text)
       end
 
       def get_text(selector)
-        object_id = find_element(selector)
-        result = @client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { return this.textContent; }', objectId: object_id)
-        result['result']['value']
+        find_element(selector).text
       end
 
       def get_property(selector, property)
-        object_id = find_element(selector)
-        result = @client.send_message('Runtime.callFunctionOn', functionDeclaration: "function() { return this['#{property}']; }", objectId: object_id)
-        result['result']['value']
+        find_element(selector).attributes[property]
+      end
+
+      def select_option(selector, option)
+        Chromate::Elements::Select.new(selector, @client).select_option(option)
       end
 
       def evaluate_script(script)

@@ -35,6 +35,13 @@ module Chromate
       "#<Chromate::Element:#{value}>"
     end
 
+    def text
+      return @text if @text
+
+      result = client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { return this.innerText; }', objectId: @object_id)
+      @text = result['result']['value']
+    end
+
     # @return [String]
     def html
       return @html if @html
@@ -49,6 +56,11 @@ module Chromate
 
       result = client.send_message('DOM.getAttributes', nodeId: @node_id)
       @attributes = Hash[*result['attributes']]
+    end
+
+    def set_attribute(name, value)
+      client.send_message('DOM.setAttributeValue', nodeId: @node_id, name: name, value: value)
+      dispatch_event('change')
     end
 
     # @return [Hash]
@@ -93,11 +105,22 @@ module Chromate
       self
     end
 
+    # @param [String] text
+    def type(text)
+      client.send_message('Runtime.callFunctionOn', functionDeclaration: "function(value) { this.value = value; this.dispatchEvent(new Event('input')); }",
+                                                    objectId: @object_id, arguments: [{ value: text }])
+
+      self
+    end
+
+    # @param [String] selector
     # @return [Chromate::Element]
     def find_element(selector)
       find_elements(selector, max: 1).first
     end
 
+    # @param [String] selector
+    # @option [Integer] max
     # @return [Array<Chromate::Element>]
     def find_elements(selector, max: 0)
       results = client.send_message('DOM.querySelectorAll', nodeId: @node_id, selector: selector)
@@ -111,6 +134,10 @@ module Chromate
     end
 
     private
+
+    def dispatch_event(event)
+      client.send_message('DOM.dispatchEvent', nodeId: @node_id, type: event)
+    end
 
     # @return [Array] [object_id, node_id]
     def find(selector, root_id = nil)

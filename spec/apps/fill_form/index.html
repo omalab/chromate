@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire de Test</title>
+    <link rel="stylesheet" href="clickViewer.css">
+    <style>
+        #confirmation-message {
+            display: none;
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        body {
+            background-color: white;
+            position: relative;
+        }
+    </style>
+    <script src="clickViewer.js"></script>
+</head>
+
+<body>
+    <h1>Formulaire de Test</h1>
+    <form id="test-form">
+        <label for="first-name">Prénom :</label>
+        <input type="text" id="first-name" name="first-name" placeholder="Entrez votre prénom"><br><br>
+
+        <label for="last-name">Nom :</label>
+        <input type="text" id="last-name" name="last-name" placeholder="Entrez votre nom"><br><br>
+
+        <label for="gender">Genre :</label>
+        <select id="gender" name="gender">
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
+            <option value="other">Autre</option>
+        </select><br><br>
+
+        <label>Options :</label><br>
+        <input type="checkbox" id="option-1" name="options" value="option1">
+        <label for="option-1">Option 1</label><br>
+
+        <input type="checkbox" id="option-2" name="options" value="option2">
+        <label for="option-2">Option 2</label><br>
+
+        <input type="checkbox" id="option-3" name="options" value="option3">
+        <label for="option-3">Option 3</label><br><br>
+
+        <button type="submit" id="submit-button">Confirmer</button>
+    </form>
+
+    <!-- Conteneur pour le message de confirmation -->
+    <div id="confirmation-message">Formulaire soumis avec succès !</div>
+
+    <script>
+        // Ajouter un écouteur d'événement sur le formulaire
+        document.getElementById('test-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Empêcher la soumission par défaut du formulaire
+            document.getElementById('confirmation-message').style.display = 'block'; // Afficher le message de confirmation
+        });
+    </script>
+</body>
+
+</html>

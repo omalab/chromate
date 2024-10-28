@@ -1,0 +1,23 @@
+body {
+	margin: 0;
+	background-color: black;
+	position: relative;
+  }
+  .click-point {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+	font-family: Arial, sans-serif;
+  }
+  .left-click {
+	background-color: red;
+  }
+  .right-click {
+	background-color: blue;
+  }
