@@ -5,9 +5,6 @@ require 'spec_helper'
 RSpec.describe 'Mouse' do
   let(:browser) { Chromate::Browser.new(headless: true) }
 
-  before(:all) { start_servers }
-  after(:all) { stop_servers }
-
   it 'clicks the button' do
     browser.start
     url = server_urls['where_clicked']
@@ -20,6 +17,7 @@ RSpec.describe 'Mouse' do
   end
 
   it 'moves the mouse to the red button' do
+    browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
     browser.refresh

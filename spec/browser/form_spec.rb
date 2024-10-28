@@ -5,16 +5,13 @@ require 'spec_helper'
 RSpec.describe 'Mouse' do
   let(:browser) { Chromate::Browser.new(headless: true) }
 
-  before(:all) { start_servers }
-  after(:all) { stop_servers }
-
   it 'fills the form' do
     browser.start
     url = server_urls['fill_form']
     browser.navigate_to(url)
     browser.find_element('#first-name').type('John')
     browser.find_element('#last-name').type('Doe')
-    browser.select_option('#gender', 'option[value="female"]')
+    browser.select_option('#gender', 'female')
     browser.find_element('#option-2').click
     browser.find_element('#submit-button').click
     browser.screenshot_to_file('spec/apps/fill_form/form.png')

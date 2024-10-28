@@ -8,8 +8,8 @@ module Support
     def start_servers
       directories = Dir['spec/apps/*'].select { |entry| File.directory?(entry) }
       ports = (3000..4000).to_a
-      @servers = []
-      @server_urls = {}
+      @@servers = []
+      @@server_urls = {}
 
       directories.each_with_index do |directory, index|
         port = ports[index]
@@ -24,8 +24,8 @@ module Support
 
         thread = Thread.new { server.start }
 
-        @servers << { server: server, thread: thread }
-        @server_urls[File.basename(directory)] = "http://localhost:#{port}"
+        @@servers << { server: server, thread: thread }
+        @@server_urls[File.basename(directory)] = "http://localhost:#{port}"
         Chromate::CLogger.log("Server started for #{directory} on port #{port}")
       end
 
@@ -40,11 +40,11 @@ module Support
     end
 
     def servers
-      @servers
+      @@servers
     end
 
     def server_urls
-      @server_urls
+      @@server_urls
     end
 
     def properly_exit
@@ -56,7 +56,7 @@ module Support
     end
 
     def stop_servers
-      @servers.each do |entry|
+      @@servers.each do |entry|
         entry[:server].shutdown
         entry[:thread].kill if entry[:thread].alive?
         Chromate::CLogger.log("Server stopped for port #{entry[:server].config[:Port]}")
