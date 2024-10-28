@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
+require_relative 'helpers'
 require_relative 'c_logger'
 
 module Chromate
   class Configuration
-    attr_accessor :chrome_path, :user_data_dir, :headless, :args, :exclude_switches, :proxy, :disable_features
+    include Helpers
+    attr_accessor :chrome_path, :user_data_dir, :headless, :xfvb, :args, :headless_args, :xfvb_args, :exclude_switches, :proxy, :disable_features
 
     def initialize
-      @chrome_path    = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-      @user_data_dir  = '/Users/mariedavid/.config/google-chrome/Default'
+      @chrome_path = if mac?
+                       '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+                     else
+                       '/usr/bin/google-chrome'
+                     end
+
+      @user_data_dir = File.expand_path('~/.config/google-chrome/Default')
       @headless       = true
+      @xfvb           = false
       @proxy          = nil
       @args           = [
         '--no-first-run',
@@ -18,12 +26,18 @@ module Chromate
         '--disable-extensions',
         '--disable-infobars',
         '--no-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--use-angle=metal',
         '--disable-popup-blocking',
         '--ignore-certificate-errors',
-        '--window-size=1920,1080',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--window-size=1920,1080'
+      ]
+      @args << '--use-angle=metal' if mac?
+      @headless_args = [
+        '--headless=new',
+        '--window-position=2400,2400'
+      ]
+      @xfvb_args = [
         '--window-position=0,0'
       ]
       @disable_features = %w[
@@ -39,7 +53,6 @@ module Chromate
         AutomationControlled
       ]
       @exclude_switches = ['enable-automation']
-      generate_arguments
     end
 
     def self.config
@@ -54,24 +67,15 @@ module Chromate
       self.class.config
     end
 
-    def generate_arguments
-      # Appliquer les configurations dynamiques pour le mode headless et les proxys
+    def generate_arguments(headless: @headless, xfvb: @xfvb, proxy: @proxy, disable_features: @disable_features)
       dynamic_args = []
 
-      # Configurer le mode headless
-      dynamic_args << "--headless=#{@headless}" unless @headless == false
+      dynamic_args += @headless_args  if headless
+      dynamic_args += @xfvb_args      if xfvb
+      dynamic_args << "--proxy-server=#{@proxy[:host]}:#{@proxy[:port]}"  if proxy && proxy[:host] && proxy[:port]
+      dynamic_args << "--disable-features=#{@disable_features.join(",")}" unless disable_features.empty?
 
-      # Configurer le serveur proxy s'il est défini
-      dynamic_args << "--proxy-server=#{@proxy[:host]}:#{@proxy[:port]}" if @proxy&.dig(:host) && @proxy[:port]
-
-      # Construire le flag disable-features avec les fonctionnalités à désactiver
-      dynamic_args << "--disable-features=#{@disable_features.join(",")}" unless @disable_features.empty?
-
-      # Ajouter les arguments exclus uniquement s'ils ne sont pas filtrés
-      all_args = @args + dynamic_args
-      all_args.reject do |arg|
-        @exclude_switches.any? { |exclude| arg.include?(exclude) }
-      end
+      @args + dynamic_args
     end
   end
 end
