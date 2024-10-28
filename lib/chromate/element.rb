@@ -133,6 +133,39 @@ module Chromate
       end
     end
 
+    # @return [Integer]
+    def shadow_root_id
+      return @shadow_root_id if @shadow_root_id
+
+      node_info = client.send_message('DOM.describeNode', nodeId: @node_id)
+      @shadow_root_id = node_info.dig('node', 'shadowRoots', 0, 'nodeId')
+    end
+
+    # @return [Boolean]
+    def shadow_root?
+      !!shadow_root_id
+    end
+
+    # @param [String] selector
+    # @return [Chromate::Element|NilClass]
+    def find_shadow_child(selector)
+      find_shadow_children(selector).first
+    end
+
+    # @param [String] selector
+    # @return [Array<Chromate::Element>]
+    def find_shadow_children(selector)
+      return [] unless shadow_root?
+
+      results = client.send_message('DOM.querySelectorAll', nodeId: shadow_root_id, selector: selector)
+      (results&.dig('nodeIds') || []).map do |node_id|
+        node_info = client.send_message('DOM.resolveNode', nodeId: node_id)
+        next unless node_info['object']
+
+        Element.new(selector, client, node_id: node_id, object_id: node_info['object']['objectId'], root_id: shadow_root_id)
+      end
+    end
+
     private
 
     def dispatch_event(event)

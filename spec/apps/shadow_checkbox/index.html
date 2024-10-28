@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Blog Simple</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .post {
+      margin-bottom: 40px;
+    }
+
+    h1,
+    h2 {
+      color: #333;
+    }
+
+    .shadow-section {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .shadow-section::part(checkbox-label) {
+      font-weight: bold;
+    }
+
+    #shadow-message {
+      color: green;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Bienvenue sur mon blog</h1>
+    </header>
+
+    <section class="post">
+      <h2>Article 1 : Les bienfaits de la méditation</h2>
+      <p>
+        La méditation est une pratique ancienne qui aide à réduire le stress et à améliorer la concentration.
+        En prenant quelques minutes chaque jour pour méditer, vous pouvez transformer votre vie de manière
+        positive et significative.
+      </p>
+    </section>
+
+    <section class="post">
+      <h2>Article 2 : Les secrets d'une alimentation équilibrée</h2>
+      <p>
+        Une alimentation équilibrée est essentielle pour maintenir une bonne santé.
+        Manger une variété d'aliments riches en nutriments peut vous aider à rester en forme et plein d'énergie.
+        Ne sous-estimez pas l'importance de consommer des fruits, des légumes et des protéines de qualité !
+      </p>
+    </section>
+
+    <section class="shadow-section" id="shadow-container">
+      <h2>Section avec Shadow DOM</h2>
+      <p>Cette section est rendue via un Shadow DOM pour une encapsulation du style et du comportement.</p>
+    </section>
+  </div>
+
+  <script>
+    // Attacher un Shadow DOM à la section avec l'ID "shadow-container"
+    const shadowHost = document.getElementById('shadow-container');
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+
+    // Ajouter du contenu au Shadow DOM
+    shadowRoot.innerHTML = `
+            <style>
+                #shadow-checkbox {
+                    margin-right: 10px;
+                }
+
+                #shadow-message {
+                    color: green;
+                    font-weight: bold;
+                    display: none;
+                    margin-top: 10px;
+                }
+            </style>
+
+            <div>
+                <label part="checkbox-label">
+                    <input type="checkbox" id="shadow-checkbox"> Cochez cette case pour voir un message
+                </label>
+                <div id="shadow-message">La case a été cochée !</div>
+            </div>
+        `;
+
+    // Ajouter un événement pour afficher le message lorsqu'on coche la case
+    const checkbox = shadowRoot.getElementById('shadow-checkbox');
+    const message = shadowRoot.getElementById('shadow-message');
+
+    checkbox.addEventListener('change', () => {
+      message.style.display = checkbox.checked ? 'block' : 'none';
+    });
+  </script>
+</body>
+
+</html>

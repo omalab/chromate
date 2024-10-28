@@ -6,10 +6,12 @@ module Chromate
   module Elements
     class Select < Element
       # @param [String] selector
-      def select_option(selector)
+      def select_option(value)
         click
-        value = find_element(selector).attributes['value']
-        set_attribute('value', value)
+        opt = find_elements('option').find do |option|
+          option.attributes['value'] == value
+        end
+        opt.set_attribute('selected', 'true')
         click
       end
     end
