@@ -29,7 +29,6 @@ module Chromate
       @chrome_path    = options[:chrome_path] || config.chrome_path
       @user_data_dir  = options[:user_data_dir] || config.user_data_dir || "/tmp/chromate_#{SecureRandom.hex}"
       @headless       = options.fetch(:headless, config.headless)
-      @record         = options.fetch(:record, false)
       @xfvb           = options.fetch(:xfvb, config.xfvb)
       @process        = nil
       @xfvb_process   = nil
@@ -43,7 +42,6 @@ module Chromate
 
     def start
       start_x_server if @xfvb && (linux? || mac?)
-      record_session if @record && @xfvb
 
       @client = Client.new(@options)
       args = [
@@ -75,7 +73,6 @@ module Chromate
     def stop
       Process.kill('TERM', @process)        if @process
       Process.kill('TERM', @xfvb_process)   if @xfvb_process
-      Process.kill('TERM', @recording)      if @recording
       @client&.close
     end
 
@@ -93,10 +90,6 @@ module Chromate
         ENV['DISPLAY'] = ':0'
         sleep 2 # Wait for XQuartz to start
       end
-    end
-
-    def record_session
-      @recording = spawn('ffmpeg', '-f', 'avfoundation', '-i', '1:0', '-r', '30', '-t', '00:00:10', 'output.mov')
     end
 
     def stop_and_exit
