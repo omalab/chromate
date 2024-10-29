@@ -27,7 +27,7 @@ module Chromate
       @node_id    = node_id
       @object_id, @node_id = find(selector, root_id) unless @object_id && @node_id
       @root_id  = root_id || document['root']['nodeId']
-      @mouse    = Native::MouseController.new(client)
+      @mouse    = Hardwares.mouse(client: client, element: self)
     end
 
     def inspect
@@ -93,14 +93,14 @@ module Chromate
 
     # @return [self]
     def click
-      mouse.click(x + (width / 2), y + (height / 2))
+      mouse.click
 
       self
     end
 
     # @return [self]
     def hover
-      mouse.move_to(x + (width / 2), y + (height / 2))
+      mouse.hover
 
       self
     end

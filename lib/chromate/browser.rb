@@ -8,12 +8,12 @@ require 'websocket-client-simple'
 require_relative 'helpers'
 require_relative 'client'
 require_relative 'element'
+require_relative 'hardwares'
 require_relative 'elements/select'
 require_relative 'user_agent'
 require_relative 'actions/navigate'
 require_relative 'actions/screenshot'
 require_relative 'actions/dom'
-require_relative 'native/mouse_controller'
 
 module Chromate
   class Browser

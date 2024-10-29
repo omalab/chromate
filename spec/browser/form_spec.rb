@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'Mouse' do
-  let(:browser) { Chromate::Browser.new(headless: false, xfvb: true) }
+  let(:browser) { Chromate::Browser.new(headless: true) }
 
   it 'fills the form' do
     browser.start
