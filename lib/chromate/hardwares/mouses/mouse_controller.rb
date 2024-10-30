@@ -24,6 +24,12 @@ module Chromate
         attach_function :CGMainDisplayID, [], :uint32
         attach_function :CGEventCreate, [:pointer], :pointer
         attach_function :CGEventGetLocation, [:pointer], CGPoint.by_value
+        attach_function :CGDisplayPixelsHigh, [:uint32], :size_t
+
+        class CGSize < FFI::Struct
+          layout :width, :float,
+                 :height, :float
+        end
 
         LEFT_DOWN   = 1
         LEFT_UP     = 2
@@ -35,15 +41,13 @@ module Chromate
           raise InvalidPlatformError, 'MouseController is only supported on macOS' unless mac?
 
           super
-          @last_known_position = CGPoint.new
-          @last_known_position[:x] = 0.0
-          @last_known_position[:y] = 0.0
+          @main_display = CGMainDisplayID()
+          @display_height = CGDisplayPixelsHigh(@main_display).to_f
+          @scale_factor = determine_scale_factor
         end
 
         def hover
-          point = CGPoint.new
-          point[:x] = target_x
-          point[:y] = target_y
+          point = convert_coordinates(target_x, target_y)
           create_and_post_event(MOUSE_MOVED, point)
           current_mouse_position
         end
@@ -76,24 +80,45 @@ module Chromate
 
         def current_mouse_position
           event = CGEventCreate(nil)
-          return @last_known_position if event.null?
+          return CGPoint.new if event.null?
 
-          point = CGEventGetLocation(event)
-
+          system_point = CGEventGetLocation(event)
           CFRelease(event)
 
-          @last_known_position[:x] = point[:x]
-          @last_known_position[:y] = point[:y]
+          # Convertir les coordonnées système en coordonnées navigateur
+          browser_x = system_point[:x] / @scale_factor
+          browser_y = (@display_height - system_point[:y]) / @scale_factor
 
           @mouse_position = {
-            x: point[:x],
-            y: point[:y]
+            x: browser_x,
+            y: browser_y
           }
 
+          # Retourner un nouveau CGPoint avec les coordonnées système
           CGPoint.new.tap do |p|
-            p[:x] = point[:x]
-            p[:y] = point[:y]
+            p[:x] = system_point[:x]
+            p[:y] = system_point[:y]
           end
+        end
+
+        def convert_coordinates(browser_x, browser_y)
+          # Convertir les coordonnées du navigateur en coordonnées système
+          system_x = browser_x * @scale_factor
+          system_y = @display_height - (browser_y * @scale_factor)
+
+          CGPoint.new.tap do |p|
+            p[:x] = system_x
+            p[:y] = system_y
+          end
+        end
+
+        def determine_scale_factor
+          # Obtenir le facteur d'échelle en comparant les dimensions logiques et physiques
+          # Par défaut, utiliser 2.0 pour les écrans Retina
+
+          `system_profiler SPDisplaysDataType | grep -i "retina"`.empty? ? 1.0 : 2.0
+        rescue StandardError
+          2.0 # Par défaut pour les écrans Retina modernes
         end
       end
     end
