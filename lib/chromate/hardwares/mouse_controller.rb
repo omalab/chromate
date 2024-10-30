@@ -43,11 +43,11 @@ module Chromate
       private
 
       def target_x
-        @element.x
+        element.x + (element.width / 2)
       end
 
       def target_y
-        @element.y
+        element.y + (element.height / 2)
       end
 
       def bezier_curve(steps: 50) # rubocop:disable Metrics/AbcSize

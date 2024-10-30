@@ -28,6 +28,13 @@ module Chromate
           click
         end
 
+        def right_click
+          hover
+          dispatch_mouse_event('mousePressed', target_x, target_y, button: 'right', click_count: 1)
+          sleep(rand(CLICK_DURATION_RANGE))
+          dispatch_mouse_event('mouseReleased', target_x, target_y, button: 'right', click_count: 1)
+        end
+
         private
 
         def click!
