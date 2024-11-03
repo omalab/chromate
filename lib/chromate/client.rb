@@ -8,9 +8,11 @@ module Chromate
       @@listeners ||= [] # rubocop:disable Style/ClassVars
     end
 
-    attr_reader :port, :ws
+    attr_reader :port, :ws, :browser
 
-    def initialize(options = {})
+    def initialize(browser)
+      @browser = browser
+      options = browser.options
       @port = options[:port] || find_available_port
     end
 

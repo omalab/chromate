@@ -17,7 +17,7 @@ require_relative 'actions/dom'
 
 module Chromate
   class Browser
-    attr_reader :client
+    attr_reader :client, :options
 
     include Helpers
     include Actions::Navigate
@@ -25,11 +25,12 @@ module Chromate
     include Actions::Dom
 
     def initialize(options = {})
-      @options        = options
-      @chrome_path    = options[:chrome_path] || config.chrome_path
-      @user_data_dir  = options[:user_data_dir] || config.user_data_dir || "/tmp/chromate_#{SecureRandom.hex}"
-      @headless       = options.fetch(:headless, config.headless)
-      @xfvb           = options.fetch(:xfvb, config.xfvb)
+      @options        = config.options.merge(options)
+      @chrome_path    = @options.fetch(:chrome_path)
+      @user_data_dir  = @options.fetch(:user_data_dir, "/tmp/chromate_#{SecureRandom.hex}")
+      @headless       = @options.fetch(:headless)
+      @xfvb           = @options.fetch(:xfvb)
+      @native_control = @options.fetch(:native_control)
       @process        = nil
       @xfvb_process   = nil
       @client         = nil
@@ -41,9 +42,9 @@ module Chromate
     end
 
     def start
-      start_x_server if @xfvb && (linux? || mac?)
+      # start_x_server if @xfvb && (linux? || mac?)
 
-      @client = Client.new(@options)
+      @client = Client.new(self)
       args = [
         @chrome_path,
         "--user-data-dir=#{@user_data_dir}",
@@ -57,9 +58,12 @@ module Chromate
       args << "--exclude-switches=#{exclude_switches.join(",")}" if exclude_switches.any?
       args << "--remote-debugging-port=#{@client.port}"
 
-      # Ajouter l'affichage X11 si un serveur X est démarré
-      if @xfvb_process || mac?
-        ENV['DISPLAY'] = ':0' if mac? # XQuartz utilise généralement :0 sur macOS
+      # Enable Xvfb or XQuartz
+      if @xfvb
+        if ENV['DISPLAY'].nil?
+          ENV['DISPLAY'] = ':0'   if mac? # XQuartz generally uses :0 on Mac
+          ENV['DISPLAY'] = ':99'  if linux? # Xvfb generally uses :99 on Linux
+        end
         args << "--display=#{ENV.fetch("DISPLAY", nil)}"
       end
 
@@ -71,9 +75,13 @@ module Chromate
     end
 
     def stop
-      Process.kill('TERM', @process)        if @process
-      Process.kill('TERM', @xfvb_process)   if @xfvb_process
+      Process.kill('TERM', @process) if @process
+      # Process.kill('TERM', @xfvb_process)   if @xfvb_process
       @client&.close
+    end
+
+    def native_control?
+      @native_control
     end
 
     private
