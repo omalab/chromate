@@ -43,6 +43,10 @@ RUN apt-get update && apt-get install -y \
     libx11-dev \
     libxtst-dev \
     x11-utils \
+    x11-apps \
+    imagemagick \
+    xdotool \
+    fluxbox \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Donwload and install Chrome

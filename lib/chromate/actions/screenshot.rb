@@ -29,6 +29,11 @@ module Chromate
         true
       end
 
+      def xvfb_screenshot(file_path)
+        display = ENV['DISPLAY'] || ':99'
+        system("xwd -root -display #{display} | convert xwd:- #{file_path}")
+      end
+
       private
 
       def screenshot(options = {})

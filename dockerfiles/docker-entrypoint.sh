@@ -5,7 +5,8 @@ if [ -f /tmp/.X99-lock ]; then
 fi
 
 if ! pgrep -x "Xvfb" > /dev/null; then 
-  Xvfb :99 -screen 0 1920x1080x24 &
+  Xvfb :99 -screen 0 1024x768x24 &
+  DISPLAY=:99 fluxbox &
 fi
 
 echo "Waiting for Xvfb to start..."
