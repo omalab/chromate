@@ -26,7 +26,8 @@ module Chromate
         '--ignore-certificate-errors',
         '--disable-gpu',
         '--disable-dev-shm-usage',
-        '--window-size=1920,1080'
+        '--window-size=1920,1080',
+        '--hide-crash-restore-bubble'
       ]
       @args << '--use-angle=metal' if mac?
       @headless_args = [

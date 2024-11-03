@@ -21,7 +21,6 @@ module Chromate
 
         def hover
           focus_chrome_window
-          binding.irb
           system("xdotool mousemove #{target_x} #{target_y}")
           current_mouse_position
         end
@@ -46,14 +45,14 @@ module Chromate
         private
 
         def focus_chrome_window
-          # Recherche de la fenêtre Chrome avec wmctrl
-          chrome_window_id = `wmctrl -lx | grep -i "chrome" | awk '{print $1}'`.strip
+          # Recherche de la fenêtre Chrome avec xdotool
+          chrome_window_id = `xdotool search --onlyvisible --name "Chrome"`.strip
 
           if chrome_window_id.empty?
             puts 'Aucune fenêtre Chrome trouvée'
           else
-            # Active la fenêtre Chrome en utilisant wmctrl
-            system("wmctrl -ia #{chrome_window_id}")
+            # Active la fenêtre Chrome avec xdotool
+            system("xdotool windowactivate #{chrome_window_id}")
           end
         end
 
