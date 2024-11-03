@@ -4,7 +4,7 @@ require 'ffi'
 require 'chromate/helpers'
 module Chromate
   module Hardwares
-    module Mouse
+    module Mouses
       class MacOsController < MouseController
         class InvalidPlatformError < StandardError; end
         include Helpers
@@ -126,8 +126,8 @@ module Chromate
 end
 
 # Test
-# require 'chromate/hardwares/mouses/mouse_controller'
+# require 'chromate/hardwares/mouses/mac_os_controller'
 # require 'ostruct'
 # element = OpenStruct.new(x: 500, y: 300, width: 100, height: 100)
-# mouse = Chromate::Hardwares::Mouse::VirtualController.new(element: element)
+# mouse = Chromate::Hardwares::Mouse::MacOsController.new(element: element)
 # mouse.hover

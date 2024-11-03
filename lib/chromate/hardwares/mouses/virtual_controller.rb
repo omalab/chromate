@@ -72,3 +72,10 @@ module Chromate
     end
   end
 end
+
+# Test
+# require 'chromate/hardwares/mouses/virtual_controller'
+# require 'ostruct'
+# element = OpenStruct.new(x: 500, y: 300, width: 100, height: 100)
+# mouse = Chromate::Hardwares::Mouse::VirtualController.new(element: element)
+# mouse.hover

@@ -1,21 +1,31 @@
 # frozen_string_literal: true
 
+require 'chromate/c_logger'
 require 'chromate/hardwares/mouse_controller'
 require 'chromate/hardwares/mouses/virtual_controller'
-require 'chromate/hardwares/mouses/mac_os_controller'
 require 'chromate/helpers'
 
 module Chromate
   module Hardwares
-    include Helpers
+    extend Helpers
 
-    def mouse(**ags)
-      if Configuration.config.native_control
-        return Mouses::MacOsController.new(**ags) if mac?
-        return Class.new if linux?
+    def mouse(**args)
+      browser = args[:client].browser
+      if browser.options[:native_control]
+        if mac?
+          Chromate::CLogger.log('🐁 Loading MacOs mouse controller')
+          require 'chromate/hardwares/mouses/mac_os_controller'
+          return Mouses::MacOsController.new(**args)
+        end
+        if linux?
+          Chromate::CLogger.log('🐁 Loading Linux mouse controller')
+          require 'chromate/hardwares/mouses/linux_controller'
+          return Mouses::LinuxController.new(**args)
+        end
         raise 'Native mouse controller is not supported on Windows' if windows?
       else
-        Mouses::VirtualController.new(**ags)
+        Chromate::CLogger.log('🐁 Loading Virtual mouse controller')
+        Mouses::VirtualController.new(**args)
       end
     end
     module_function :mouse
