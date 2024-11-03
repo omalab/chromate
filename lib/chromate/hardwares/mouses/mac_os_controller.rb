@@ -5,7 +5,7 @@ require 'chromate/helpers'
 module Chromate
   module Hardwares
     module Mouse
-      class VirtualController < MouseController
+      class MacOsController < MouseController
         class InvalidPlatformError < StandardError; end
         include Helpers
         extend FFI::Library

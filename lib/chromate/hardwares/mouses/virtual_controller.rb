@@ -3,7 +3,7 @@
 module Chromate
   module Hardwares
     module Mouses
-      class NativeController < Chromate::Hardwares::MouseController
+      class VirtualController < Chromate::Hardwares::MouseController
         def hover
           steps     = rand(25..50)
           points    = bezier_curve(steps: steps)

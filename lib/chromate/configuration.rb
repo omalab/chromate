@@ -6,7 +6,8 @@ require_relative 'c_logger'
 module Chromate
   class Configuration
     include Helpers
-    attr_accessor :chrome_path, :user_data_dir, :headless, :xfvb, :args, :headless_args, :xfvb_args, :exclude_switches, :proxy, :disable_features
+    attr_accessor :chrome_path, :user_data_dir, :headless, :xfvb, :native_control, :args, :headless_args, :xfvb_args, :exclude_switches, :proxy,
+                  :disable_features
 
     def initialize
       @chrome_path = if mac?
@@ -15,11 +16,12 @@ module Chromate
                        '/usr/bin/google-chrome'
                      end
 
-      @user_data_dir = File.expand_path('~/.config/google-chrome/Default')
-      @headless       = true
-      @xfvb           = false
-      @proxy          = nil
-      @args           = [
+      @user_data_dir      = File.expand_path('~/.config/google-chrome/Default')
+      @headless           = true
+      @xfvb               = false
+      @native_control     = false
+      @proxy              = nil
+      @args               = [
         '--no-first-run',
         '--no-default-browser-check',
         '--disable-blink-features=AutomationControlled',
