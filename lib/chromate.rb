@@ -5,7 +5,6 @@ require_relative 'chromate/browser'
 require_relative 'chromate/configuration'
 
 module Chromate
-  class Error < StandardError; end
   class << self
     def configure
       yield configuration
