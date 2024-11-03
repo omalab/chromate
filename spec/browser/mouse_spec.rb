@@ -22,10 +22,10 @@ RSpec.describe 'Mouse' do
     browser.navigate_to(url)
     browser.refresh
     browser.hover_element('#red')
-    browser.screenshot_to_file('spec/apps/where_clicked/hover_element_red.png')
+    browser.screenshot_to_file('spec/apps/where_moved/hover_element_red.png')
 
     browser.stop
-    expect(File.exist?('spec/apps/where_clicked/hover_element_red.png')).to be true
+    expect(File.exist?('spec/apps/where_moved/hover_element_red.png')).to be true
   end
 
   it 'moves the mouse to the blue button' do
@@ -34,10 +34,10 @@ RSpec.describe 'Mouse' do
     browser.navigate_to(url)
     browser.refresh
     browser.hover_element('#blue')
-    browser.screenshot_to_file('spec/apps/where_clicked/hover_element_blue.png')
+    browser.screenshot_to_file('spec/apps/where_moved/hover_element_blue.png')
 
     browser.stop
-    expect(File.exist?('spec/apps/where_clicked/hover_element_blue.png')).to be true
+    expect(File.exist?('spec/apps/where_moved/hover_element_blue.png')).to be true
   end
 
   it 'moves the mouse to the green button' do
@@ -46,10 +46,10 @@ RSpec.describe 'Mouse' do
     browser.navigate_to(url)
     browser.refresh
     browser.hover_element('#green')
-    browser.screenshot_to_file('spec/apps/where_clicked/hover_element_green.png')
+    browser.screenshot_to_file('spec/apps/where_moved/hover_element_green.png')
 
     browser.stop
-    expect(File.exist?('spec/apps/where_clicked/hover_element_green.png')).to be true
+    expect(File.exist?('spec/apps/where_moved/hover_element_green.png')).to be true
   end
 
   it 'moves the mouse to the yellow button' do
@@ -58,10 +58,10 @@ RSpec.describe 'Mouse' do
     browser.navigate_to(url)
     browser.refresh
     browser.hover_element('#yellow')
-    browser.screenshot_to_file('spec/apps/where_clicked/hover_element_yellow.png')
+    browser.screenshot_to_file('spec/apps/where_moved/hover_element_yellow.png')
 
     browser.stop
-    expect(File.exist?('spec/apps/where_clicked/hover_element_yellow.png')).to be true
+    expect(File.exist?('spec/apps/where_moved/hover_element_yellow.png')).to be true
   end
 
   it 'moves the mouse to all buttons' do
@@ -73,9 +73,9 @@ RSpec.describe 'Mouse' do
     browser.hover_element('#yellow')
     browser.hover_element('#green')
     browser.hover_element('#blue')
-    browser.screenshot_to_file('spec/apps/where_clicked/hover_element_all.png')
+    browser.screenshot_to_file('spec/apps/where_moved/hover_element_all.png')
 
     browser.stop
-    expect(File.exist?('spec/apps/where_clicked/hover_element_all.png')).to be true
+    expect(File.exist?('spec/apps/where_moved/hover_element_all.png')).to be true
   end
 end

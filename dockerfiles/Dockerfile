@@ -58,13 +58,22 @@ RUN gem install bundler -v 2.5.21
 
 WORKDIR /app
 
-COPY . .
+COPY Gemfile Gemfile.lock chromate.gemspec ./
+COPY lib/chromate/version.rb ./lib/chromate/version.rb
 
 RUN bundle install
 
+COPY dockerfiles/docker-entrypoint.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+COPY . .
+
 ENV DISPLAY=:99
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 CMD [ "bash" ]
 
-# docker build -t chromate .
+# docker build -f dockerfiles/Dockerfile -t chromate .
 # docker run -v $(pwd):/app -it chromate
