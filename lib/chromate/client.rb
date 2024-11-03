@@ -50,6 +50,10 @@ module Chromate
       client_self
     end
 
+    def stop
+      @ws&.close
+    end
+
     def send_message(method, params = {})
       @id += 1
       message = { id: @id, method: method, params: params }
@@ -72,10 +76,6 @@ module Chromate
       @ws_url = fetch_websocket_debug_url
       @ws     = WebSocket::Client::Simple.connect(@ws_url)
       puts 'Reconnexion WebSocket réussie'
-    end
-
-    def close
-      @ws&.close
     end
 
     def handle_message(message)
