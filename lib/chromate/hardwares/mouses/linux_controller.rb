@@ -21,6 +21,7 @@ module Chromate
 
         def hover
           focus_chrome_window
+          # system("xdotool mousemove_relative --sync -- #{x} #{y}")
           system("xdotool mousemove #{target_x} #{target_y}")
           current_mouse_position
         end

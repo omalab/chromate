@@ -58,6 +58,9 @@ module Chromate
       @attributes = Hash[*result['attributes']]
     end
 
+    # @param [String] name
+    # @param [String] value
+    # @return [self]
     def set_attribute(name, value)
       client.send_message('DOM.setAttributeValue', nodeId: @node_id, name: name, value: value)
       dispatch_event('change')

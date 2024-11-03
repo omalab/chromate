@@ -47,6 +47,8 @@ RUN apt-get update && apt-get install -y \
     imagemagick \
     xdotool \
     fluxbox \
+    ffmpeg \
+    psmisc \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Donwload and install Chrome

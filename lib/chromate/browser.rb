@@ -31,8 +31,10 @@ module Chromate
       @headless       = @options.fetch(:headless)
       @xfvb           = @options.fetch(:xfvb)
       @native_control = @options.fetch(:native_control)
+      @record         = @options.fetch(:record, false)
       @process        = nil
       @xfvb_process   = nil
+      @record_process = nil
       @client         = nil
 
       trap('INT') { stop_and_exit }
@@ -43,6 +45,7 @@ module Chromate
 
     def start
       # start_x_server if @xfvb && (linux? || mac?)
+      start_video_recording if @record
 
       @client = Client.new(self)
       args = [
@@ -75,8 +78,9 @@ module Chromate
     end
 
     def stop
-      Process.kill('TERM', @process) if @process
-      # Process.kill('TERM', @xfvb_process)   if @xfvb_process
+      Process.kill('TERM', @process)        if @process
+      Process.kill('TERM', @record_process) if @record_process
+      Process.kill('TERM', @xfvb_process)   if @xfvb_process
       @client&.close
     end
 
@@ -98,6 +102,11 @@ module Chromate
         ENV['DISPLAY'] = ':0'
         sleep 2 # Wait for XQuartz to start
       end
+    end
+
+    def start_video_recording
+      outfile = File.join(Dir.pwd, "output_video_#{Time.now.to_i}.mp4")
+      @record_process = spawn("ffmpeg -f x11grab -r 25 -s 1920x1080 -i #{ENV.fetch("DISPLAY", ":99")} -pix_fmt yuv420p -y #{outfile}")
     end
 
     def stop_and_exit
