@@ -1,163 +1,242 @@
-# Browser
+## `Chromate::Browser` Class
 
-The `Chromate::Browser` class is the main interface for interacting with the Chrome browser using the Chromate gem. It provides methods for navigating, interacting with elements, taking screenshots, and more.
+The `Chromate::Browser` class is responsible for controlling a browser instance using the Chrome DevTools Protocol (CDP). It provides methods for navigation, screenshots, and DOM interactions, as well as handling browser lifecycle (start and stop).
 
-## Initialization
-
-To create a new instance of the `Browser` class, you can pass in various options:
+### Initialization
 
 ```ruby
-browser = Chromate::Browser.new(
-  headless: true,
-  native_control: true,
-  user_data_dir: '/path/to/user/data',
-  record: false
-)
+browser = Chromate::Browser.new(options = {})
 ```
 
-### Options
+- **Parameters:**
+  - `options` (Hash, optional): Configuration options for the browser instance.
+    - `:chrome_path` (String): Path to the Chrome executable.
+    - `:user_data_dir` (String): Directory for storing user data (default: a temporary directory).
+    - `:headless` (Boolean): Run the browser in headless mode.
+    - `:xfvb` (Boolean): Use Xvfb for headless mode on Linux.
+    - `:native_control` (Boolean): Enable native control for enhanced undetection.
+    - `:record` (Boolean): Enable video recording of the browser session.
 
-- `headless`: Run Chrome in headless mode (default: true).
-- `native_control`: Use native mouse control (default: false).
-- `user_data_dir`: Directory to store user data (default: a temporary directory).
-- `record`: Record the browser session (default: false).
-- `xfvb`: Use xvfb for headless mode (default: false).
+### Public Methods
 
-## Methods
+#### `#start`
 
-### 
+Starts the browser process and initializes the CDP client.
 
-start
+- **Example:**
+  ```ruby
+  browser.start
+  ```
 
+#### `#stop`
 
+Stops the browser process, including any associated Xvfb or video recording processes.
 
-Starts the Chrome browser with the specified options.
+- **Example:**
+  ```ruby
+  browser.stop
+  ```
 
-```ruby
-browser.start
-```
+#### `#native_control?`
 
-### 
+Checks if native control is enabled for the browser instance.
 
-stop
+- **Returns:**
+  - `Boolean`: `true` if native control is enabled, `false` otherwise.
 
+- **Example:**
+  ```ruby
+  puts "Native control enabled" if browser.native_control?
+  ```
 
+### Navigation Methods (from `Actions::Navigate`)
 
-Stops the Chrome browser and any associated processes.
+#### `#navigate_to(url)`
 
-```ruby
-browser.stop
-```
+Navigates the browser to the specified URL.
 
-### `navigate_to(url)`
+- **Parameters:**
+  - `url` (String): The URL to navigate to.
 
-Navigates to the specified URL and waits for the page to load.
+- **Example:**
+  ```ruby
+  browser.navigate_to('https://example.com')
+  ```
 
-```ruby
-browser.navigate_to('http://example.com')
-```
+#### `#wait_for_page_load`
 
-### `find_element(selector)`
+Waits until the page has fully loaded, including the `DOMContentLoaded` event, `load` event, and `frameStoppedLoading` event.
 
-Finds an element on the page using the specified CSS selector.
+- **Example:**
+  ```ruby
+  browser.wait_for_page_load
+  ```
 
-```ruby
-element = browser.find_element('#some-element')
-```
+#### `#refresh`
 
-### `click_element(selector)`
+Reloads the current page.
 
-Clicks on an element specified by the CSS selector.
+- **Example:**
+  ```ruby
+  browser.refresh
+  ```
 
-```ruby
-browser.click_element('#some-element')
-```
+#### `#go_back`
 
-### `hover_element(selector)`
+Navigates back to the previous page in the browser history.
 
-Hovers over an element specified by the CSS selector.
+- **Example:**
+  ```ruby
+  browser.go_back
+  ```
 
-```ruby
-browser.hover_element('#some-element')
-```
+### Screenshot Methods (from `Actions::Screenshot`)
 
-### `type_text(selector, text)`
+#### `#screenshot_to_file(file_path, options = {})`
 
-Types text into an element specified by the CSS selector.
+Takes a screenshot of the current page and saves it to the specified file.
 
-```ruby
-browser.type_text('#input-field', 'Hello, world!')
-```
+- **Parameters:**
+  - `file_path` (String): The file path to save the screenshot.
+  - `options` (Hash, optional): Additional options for the screenshot.
 
-### `screenshot_to_file(file_path, options = {})`
+- **Example:**
+  ```ruby
+  browser.screenshot_to_file('screenshot.png')
+  ```
 
-Takes a screenshot of the current page and saves it to the specified file path.
+#### `#screenshot_full_page(file_path, options = {})`
 
-```ruby
-browser.screenshot_to_file('screenshot.png')
-```
+Takes a full-page screenshot and saves it to the specified file.
 
-### 
+- **Parameters:**
+  - `file_path` (String): The file path to save the full-page screenshot.
+  - `options` (Hash, optional): Additional options for the screenshot.
 
-native_control?
+- **Example:**
+  ```ruby
+  browser.screenshot_full_page('full_page.png')
+  ```
 
+#### `#xvfb_screenshot(file_path)`
 
+Takes a screenshot using `Xvfb` (for Linux environments) and saves it to the specified file.
 
-Returns whether native control is enabled.
+- **Parameters:**
+  - `file_path` (String): The file path to save the screenshot.
 
-```ruby
-puts browser.native_control? # => true or false
-```
+- **Example:**
+  ```ruby
+  browser.xvfb_screenshot('xvfb_screenshot.png')
+  ```
 
-## Example Usage
+### DOM Methods (from `Actions::Dom`)
+
+#### `#find_element(selector)`
+
+Finds a single element on the page using the specified CSS selector.
+
+- **Parameters:**
+  - `selector` (String): The CSS selector to locate the element.
+
+- **Returns:**
+  - `Chromate::Element`: The found element.
+
+- **Example:**
+  ```ruby
+  element = browser.find_element('#my-element')
+  puts element.text
+  ```
+
+#### `#click_element(selector)`
+
+Finds an element by selector and clicks it.
+
+- **Parameters:**
+  - `selector` (String): The CSS selector of the element to click.
+
+- **Example:**
+  ```ruby
+  browser.click_element('#submit-button')
+  ```
+
+#### `#hover_element(selector)`
+
+Finds an element by selector and hovers over it.
+
+- **Parameters:**
+  - `selector` (String): The CSS selector of the element to hover.
+
+- **Example:**
+  ```ruby
+  browser.hover_element('#hover-target')
+  ```
+
+#### `#type_text(selector, text)`
+
+Finds an element by selector and types the specified text into it.
+
+- **Parameters:**
+  - `selector` (String): The CSS selector of the element.
+  - `text` (String): The text to type into the element.
+
+- **Example:**
+  ```ruby
+  browser.type_text('#input-field', 'Hello, Chromate!')
+  ```
+
+#### `#select_option(selector, option)`
+
+Selects an option from a dropdown element.
+
+- **Parameters:**
+  - `selector` (String): The CSS selector of the dropdown element.
+  - `option` (String): The value of the option to select.
+
+- **Example:**
+  ```ruby
+  browser.select_option('#dropdown', 'option2')
+  ```
+
+#### `#evaluate_script(script)`
+
+Executes the specified JavaScript expression on the page.
+
+- **Parameters:**
+  - `script` (String): The JavaScript code to evaluate.
+
+- **Returns:**
+  - The result of the JavaScript evaluation.
+
+- **Example:**
+  ```ruby
+  result = browser.evaluate_script('document.title')
+  puts "Page title: #{result}"
+  ```
+
+### Exception Handling
+
+- The browser handles `INT` and `TERM` signals gracefully by stopping the browser process and exiting safely.
+- The `stop_and_exit` method is used to ensure proper shutdown.
+
+### Example Usage
 
 ```ruby
 require 'chromate'
 
-browser = Chromate::Browser.new(headless: true, native_control: true)
+options = {
+  chrome_path: '/usr/bin/google-chrome',
+  headless: true,
+  native_control: true,
+  record: true
+}
+
+browser = Chromate::Browser.new(options)
+
 browser.start
-
-browser.navigate_to('http://example.com')
-browser.find_element('#some-element').click
-browser.screenshot_to_file('screenshot.png')
-
+browser.navigate_to('https://example.com')
+browser.screenshot_to_file('example.png')
+element = browser.find_element('#main-header')
+puts element.text
 browser.stop
 ```
-
-## Private Methods
-
-### 
-
-start_video_recording
-
-
-
-Starts recording the browser session using `ffmpeg`.
-
-### 
-
-build_args
-
-
-
-Builds the arguments for starting the Chrome process.
-
-### 
-
-stop_and_exit
-
-
-
-Stops the browser and exits the process.
-
-### 
-
-config
-
-
-
-Returns the Chromate configuration.
-
-## Conclusion
-
-The `Chromate::Browser` class provides a powerful interface for automating interactions with the Chrome browser. With support for headless mode, native mouse control, and more, it is a versatile tool for creating undetectable bots with human-like behavior.
