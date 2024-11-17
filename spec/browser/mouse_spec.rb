@@ -9,6 +9,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_clicked']
     browser.navigate_to(url)
+    browser.refresh
     browser.click_element('#interactive-button')
     browser.screenshot('spec/apps/where_clicked/click.png')
 
@@ -77,5 +78,25 @@ RSpec.describe 'Mouse' do
 
     browser.stop
     expect(File.exist?('spec/apps/where_moved/hover_element_all.png')).to be true
+  end
+
+  it 'drag and drop the blue square to the green square' do
+    browser.start
+    url = server_urls['drag_and_drop']
+    browser.navigate_to(url)
+    browser.refresh
+    blue_square = browser.find_element('#draggable')
+    green_square = browser.find_element('#dropzone')
+
+    expect(green_square.text).to eq('Drop Here')
+
+    blue_square.drop_to(green_square)
+
+    expect(green_square.text).to eq('Dropped!')
+
+    browser.screenshot('spec/apps/drag_and_drop/droped.png')
+
+    browser.stop
+    expect(File.exist?('spec/apps/drag_and_drop/droped.png')).to be true
   end
 end
