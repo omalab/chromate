@@ -14,13 +14,30 @@ Chromate is a custom driver for Chrome using the Chrome DevTools Protocol (CDP) 
 Add gem to your application's Gemfile:
 
 ```sh
-bundle add chromate
+# Github pkgs
+bundle add chromate --source https://rubygems.pkg.github.com/eth3rnit3
+
+# Or add manualy within a block
+# source "https://rubygems.pkg.github.com/eth3rnit3" do
+#   gem "chromate"
+# end
+
+# or
+
+# Rubygems
+bundle add chromate-rb
+
 ```
 
 Or install it yourself as:
 
 ```sh
-gem install chromate
+# Github pkgs
+gem install chromate --source https://rubygems.pkg.github.com/eth3rnit3
+
+# or
+
+gem install chromate-rb
 ```
 
 ## Usage
