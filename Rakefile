@@ -12,9 +12,12 @@ RuboCop::RakeTask.new
 task default: %i[spec rubocop]
 
 require_relative "lib/chromate"
+require_relative 'spec/support/modes'
 
 namespace :chromate do
   namespace :test do
+    include Support::Modes
+
     task :open do
       browser = Chromate::Browser.new(headless: false)
       browser.start
@@ -25,8 +28,16 @@ namespace :chromate do
       browser.stop
     end
 
+    # docker run -it --rm -v $(pwd):/app --env CHROMATE_MODE=docker-xvfb chromate:latest bundle exec rake chromate:test:all
+    task :all do
+      Rake::Task["chromate:test:pixelscan"].invoke
+      Rake::Task["chromate:test:brotector"].invoke
+      Rake::Task["chromate:test:bot"].invoke
+      Rake::Task["chromate:test:cloudflare"].invoke
+    end
+
     task :pixelscan do
-      browser = Chromate::Browser.new
+      browser = Chromate::Browser.new(browser_args)
       browser.start
       browser.navigate_to("https://pixelscan.net")
       sleep 10
@@ -35,20 +46,18 @@ namespace :chromate do
     end
 
     task :brotector do
-      require "chromate/native/mouse_controller"
-      browser = Chromate::Browser.new
+      browser = Chromate::Browser.new(browser_args)
       browser.start
-      browser.navigate_to("https://kaliiiiiiiiii.github.io/brotector?crash=false")
+      browser.navigate_to("https://kaliiiiiiiiii.github.io/brotector")
       sleep 2
-      # browser.click_element("#clickHere")
-      mouse = Chromate::Native::MouseController.new(browser.client)
-      mouse.click(100, 100)
+      browser.click_element("#clickHere")
+      sleep 3
       browser.screenshot("results/brotector.png")
       browser.stop
     end
 
     task :bot do
-      browser = Chromate::Browser.new
+      browser = Chromate::Browser.new(browser_args)
       browser.start
       browser.navigate_to("https://bot.sannysoft.com")
       sleep 2
@@ -57,14 +66,30 @@ namespace :chromate do
     end
 
     task :cloudflare do
-      Chromate.configure do |config|
-        config.headless = false
-      end
-      browser = Chromate::Browser.new
+      browser = Chromate::Browser.new(browser_args)
       browser.start
       browser.navigate_to("https://2captcha.com/fr/demo/cloudflare-turnstile-challenge")
       sleep 10
       browser.screenshot("results/cloudflare.png")
+      browser.stop
+    end
+
+    task :my_ip do
+      browser = Chromate::Browser.new(browser_args)
+      browser.start
+      browser.navigate_to("https://whatismyipaddress.com")
+      sleep 2
+      browser.click_element('//*[@id="qc-cmp2-ui"]/div[2]/div/button[3]')
+      browser.screenshot("results/my_ip.png")
+      browser.stop
+    end
+
+    task :headers do
+      browser = Chromate::Browser.new(browser_args)
+      browser.start
+      browser.navigate_to("https://httpbin.org/headers")
+      sleep 2
+      browser.screenshot("results/headers.png")
       browser.stop
     end
   end
