@@ -47,8 +47,7 @@ module Chromate
       @client         = nil
       @args           = [
         @chrome_path,
-        "--user-data-dir=#{@user_data_dir}",
-        "--lang=#{@options[:lang] || "fr-FR"}"
+        "--user-data-dir=#{@user_data_dir}"
       ]
 
       trap('INT') { stop_and_exit }
@@ -72,7 +71,7 @@ module Chromate
       end
 
       Hardwares::MouseController.reset_mouse_position
-
+      Chromate::CLogger.log("Starting browser with args: #{@args}", level: :debug)
       @process = spawn(*@args, err: 'chrome_errors.log', out: 'chrome_output.log')
       sleep 2
 
@@ -117,8 +116,12 @@ module Chromate
       exclude_switches = config.exclude_switches || []
       exclude_switches += @options[:exclude_switches] if @options[:exclude_switches]
 
+      if @options.dig(:options, :args)
+        @args += @options[:options][:args]
+        @args << "--exclude-switches=#{exclude_switches.join(",")}" if exclude_switches.any?
+        return @args
+      end
       @args += config.generate_arguments(**@options)
-      @args += @options[:options][:args] if @options.dig(:options, :args)
       @args << "--user-agent=#{@options[:user_agent] || UserAgent.call}"
       @args << "--exclude-switches=#{exclude_switches.join(",")}" if exclude_switches.any?
 
