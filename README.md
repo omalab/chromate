@@ -125,6 +125,14 @@ ruby your_script.rb # or bundle exec rspec
 
 This setup ensures that all necessary dependencies are installed and configured correctly, allowing you to focus on writing your automation scripts without worrying about the underlying environment.
 
+## Disclaimer
+
+**Chromate** is an open-source project designed to provide a solid foundation for the creation of autonomous AI agents, fostering innovation and development in the field of artificial intelligence. This project is developed with an educational and collaborative spirit, aiming to promote responsible and ethical usage.
+
+Under no circumstances is **Chromate** intended to be used for creating automated bots, scraping tools, or any other activities that violate platform policies or applicable laws. The author disclaims any responsibility for improper or illegal use of this project.
+
+Users are encouraged to comply with platform terms of service and to adopt practices that adhere to ethical and legal standards.
+
 ## Contribution
 
 Contributions are welcome! If you have suggestions for improvements or new features, please open an issue or submit a pull request on GitHub.
