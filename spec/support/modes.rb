@@ -9,6 +9,11 @@ module Support
       case ENV.fetch('CHROMATE_MODE', nil)
       when 'docker-xvfb'
         { headless: false, xfvb: true, native_control: true, record: "spec/video-records/#{example_name}.mp4" }
+      when 'bot-browser'
+        require 'bot_browser'
+        BotBrowser.install unless BotBrowser.installed?
+        BotBrowser.load
+        { headless: false, xfvb: false, native_control: false }
       else
         { headless: true, xfvb: false, native_control: false }
       end
