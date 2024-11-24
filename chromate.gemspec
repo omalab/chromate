@@ -3,7 +3,7 @@
 require_relative 'lib/chromate/version'
 
 mode = ENV.fetch('DEPLOY_MODE', 'github')
-host = mode == 'github' ? 'https://rubygems.pkg.github.com/Eth3rnit3' : 'http://rubygems.org'
+host = mode == 'github' ? 'https://rubygems.pkg.github.com/Eth3rnit3' : 'https://rubygems.org'
 name = mode == 'github' ? 'chromate' : 'chromate-rb'
 
 Gem::Specification.new do |spec|
