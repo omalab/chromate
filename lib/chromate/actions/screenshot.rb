@@ -14,6 +14,8 @@ module Chromate
         return screenshot_full_page(file_path, options) if options.delete(:full_page)
 
         image_data = make_screenshot(options)
+        return image_data if options[:base64]
+
         File.binwrite(file_path, image_data)
         true
       end
@@ -48,7 +50,6 @@ module Chromate
         screenshot(file_path, options)
 
         @client.send_message('Emulation.clearDeviceMetricsOverride')
-        true
       end
 
       # @param options [Hash] Options for the screenshot
