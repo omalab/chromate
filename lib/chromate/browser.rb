@@ -84,12 +84,20 @@ module Chromate
       self
     end
 
+    def started?
+      @process ? true : false
+    end
+
     # @return [self]
     def stop
       stop_process(@process)        if @process
       stop_process(@record_process) if @record_process
       stop_process(@xfvb_process)   if @xfvb_process
       @client&.stop
+
+      @process = nil
+      @record_process = nil
+      @xfvb_process = nil
 
       self
     end
