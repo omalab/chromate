@@ -2,8 +2,12 @@
 
 require_relative 'lib/chromate/version'
 
+mode = ENV.fetch('DEPLOY_MODE', 'github')
+host = mode == 'github' ? 'https://rubygems.pkg.github.com/Eth3rnit3' : 'http://rubygems.org'
+name = mode == 'github' ? 'chromate' : 'chromate-rb'
+
 Gem::Specification.new do |spec|
-  spec.name = 'chromate'
+  spec.name = name
   spec.version = Chromate::VERSION
   spec.authors = ['Eth3rnit3']
   spec.email = ['eth3rnit3@gmail.com']
@@ -14,8 +18,7 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.0.0'
 
-  # spec.metadata['allowed_push_host'] = 'http://rubygems.org'
-  spec.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/Eth3rnit3'
+  spec.metadata['allowed_push_host'] = host
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/Eth3rnit3/chromate'
