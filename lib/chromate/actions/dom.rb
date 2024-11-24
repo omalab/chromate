@@ -42,16 +42,12 @@ module Chromate
       # @param selector [String] CSS selector
       # @return [String]
       def evaluate_script(script)
-        result = @client.send_message('Runtime.evaluate', expression: script)
+        result = @client.send_message('Runtime.evaluate', expression: script, returnByValue: true)
 
-        case result['result']['type']
-        when 'string', 'number', 'boolean'
-          result['result']['value']
-        when 'object'
-          result['result']['objectId']
-        else
-          result['result']
-        end
+        result['result']['value']
+      rescue StandardError => e
+        Chromate::CLogger.log("Error evaluating script: #{e.message}", :error)
+        nil
       end
     end
   end
