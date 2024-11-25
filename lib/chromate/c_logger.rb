@@ -12,6 +12,7 @@ module Chromate
       self.formatter = proc do |severity, datetime, _progname, msg|
         "[Chromate] #{datetime.strftime("%Y-%m-%d %H:%M:%S")} #{severity}: #{msg}\n"
       end
+      self.level = ENV['CHROMATE_DEBUG'] ? :debug : :info
     end
 
     # @return [Chromate::CLogger]
