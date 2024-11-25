@@ -19,6 +19,14 @@ module Chromate
         @client         = client
       end
 
+      # @param [Chromate::Element] element
+      # @return [self]
+      def set_element(element) # rubocop:disable Naming/AccessorMethodName
+        @element = element
+
+        self
+      end
+
       # @return [Hash]
       def mouse_position
         @@mouse_position ||= { x: 0, y: 0 } # rubocop:disable Style/ClassVars

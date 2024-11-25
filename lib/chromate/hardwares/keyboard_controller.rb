@@ -13,6 +13,15 @@ module Chromate
         @type_interval  = rand(0.05..0.1)
       end
 
+      # @param [Chromate::Element] element
+      # @return [self]
+      def set_element(element) # rubocop:disable Naming/AccessorMethodName
+        @element = element
+        @type_interval = rand(0.05..0.1)
+
+        self
+      end
+
       # @param [String] key
       # @return [self]
       def press_key(_key)

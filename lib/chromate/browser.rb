@@ -81,6 +81,8 @@ module Chromate
 
       patch if config.patch?
 
+      set_hardwares
+
       self
     end
 
@@ -134,6 +136,11 @@ module Chromate
       @args << "--exclude-switches=#{exclude_switches.join(",")}" if exclude_switches.any?
 
       @args
+    end
+
+    def set_hardwares
+      config.mouse_controller = Hardwares.mouse(client: @client, element: nil)
+      config.keyboard_controller = Hardwares.keyboard(client: @client, element: nil)
     end
 
     # @param pid [Integer] PID of the process to stop

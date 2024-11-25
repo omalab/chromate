@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+tar -czvf chromate.tar.gz lib docs spec/**/*_spec.rb Gemfile Gemfile.lock .ruby-version README.md LICENSE.txt

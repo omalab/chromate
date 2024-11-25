@@ -48,7 +48,8 @@ module Chromate
     ].freeze
 
     attr_accessor :user_data_dir, :headless, :xfvb, :native_control, :startup_patch,
-                  :args, :headless_args, :xfvb_args, :exclude_switches, :proxy, :disable_features
+                  :args, :headless_args, :xfvb_args, :exclude_switches, :proxy, :disable_features,
+                  :mouse_controller, :keyboard_controller
 
     def initialize
       @user_data_dir      = File.expand_path('~/.config/google-chrome/Default')

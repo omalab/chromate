@@ -12,6 +12,7 @@
 
 *.log
 .DS_Store
+chromate.tar.gz
 spec/apps/**/*.png
 spec/video-records/*.mp4
 

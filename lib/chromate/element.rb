@@ -31,12 +31,12 @@ module Chromate
 
     # @return [Chromate::Hardwares::MouseController]
     def mouse
-      @mouse ||= Hardwares.mouse(client: client, element: self)
+      Chromate.configuration.mouse_controller.set_element(self)
     end
 
     # @return [Chromate::Hardwares::KeyboardController]
     def keyboard
-      @keyboard ||= Hardwares.keyboard(client: client, element: self)
+      Chromate.configuration.keyboard_controller.set_element(self)
     end
 
     # @return [String]
