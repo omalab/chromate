@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require 'chromate/elements/tags'
+
 module Chromate
   class Element
+    include Elements::Tags
+
     class NotFoundError < StandardError
       def initialize(selector, root_id)
         super("Element not found with selector: #{selector} under root_id: #{root_id}")
@@ -25,7 +29,7 @@ module Chromate
       @client     = client
       @object_id  = object_id
       @node_id    = node_id
-      @object_id, @node_id = find(selector, root_id) unless @object_id && @node_id
+      @object_id, @node_id = magick_find(selector, root_id) unless @object_id && @node_id
       @root_id = root_id || document['root']['nodeId']
     end
 
@@ -52,6 +56,12 @@ module Chromate
     end
 
     # @return [String]
+    def value
+      result = client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { return this.value; }', objectId: @object_id)
+      result['result']['value']
+    end
+
+    # @return [String]
     def html
       html = client.send_message('DOM.getOuterHTML', objectId: @object_id)
       html['outerHTML']
@@ -61,6 +71,14 @@ module Chromate
     def attributes
       result = client.send_message('DOM.getAttributes', nodeId: @node_id)
       Hash[*result['attributes']]
+    end
+
+    # @return [String]
+    def tag_name
+      result = client.send_message('Runtime.callFunctionOn',
+                                   functionDeclaration: 'function() { return this.tagName.toLowerCase(); }',
+                                   objectId: @object_id)
+      result['result']['value']
     end
 
     # @param [String] name
@@ -214,6 +232,30 @@ module Chromate
       raise InvalidSelectorError, selector unless node_info['object']
 
       [node_info['object']['objectId'], result['nodeId']]
+    end
+
+    # @param [String] selector
+    # @option [Integer] root_id
+    # @return [Chromate::Element, nil]
+    def magick_find(selector, root_id = nil)
+      find(selector, root_id)
+    rescue NotFoundError, InvalidSelectorError
+      el = find_in_shadow_recursively(selector)
+      raise NotFoundError.new(selector, @root_id) unless el
+
+      el
+    end
+
+    # @param [String] selector
+    # @return [Chromate::Element, nil]
+    def find_in_shadow_recursively(selector)
+      shadow_children = find_shadow_children('*')
+      shadow_children.each do |child|
+        found_element = child.find_element(selector) || child.find_in_shadow_recursively(selector)
+        return found_element if found_element
+      end
+
+      nil
     end
 
     def document
