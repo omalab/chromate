@@ -28,12 +28,7 @@ module Chromate
           }
         JAVASCRIPT
 
-        result = client.send_message('Runtime.callFunctionOn',
-                                     functionDeclaration: script,
-                                     objectId: @object_id,
-                                     returnByValue: true)
-
-        result = result.dig('result', 'value')
+        result = evaluate_script(script)
         {
           'content' => [result['x'], result['y']],
           'width' => result['width'],

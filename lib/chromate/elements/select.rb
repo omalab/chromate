@@ -11,12 +11,7 @@ module Chromate
       def select_option(value)
         click
 
-        unless Chromate.configuration.native_control
-          client.send_message('Runtime.callFunctionOn',
-                              functionDeclaration: javascript,
-                              objectId: @object_id,
-                              arguments: [{ value: value }])
-        end
+        evaluate_script(javascript, arguments: [{ value: value }]) unless Chromate.configuration.native_control
 
         Option.new(value, client).click
 
@@ -25,21 +20,15 @@ module Chromate
 
       # @return [String|nil]
       def selected_value
-        result = client.send_message('Runtime.callFunctionOn',
-                                     functionDeclaration: 'function() { return this.value; }',
-                                     objectId: @object_id)
-        result.dig('result', 'value')
+        evaluate_script('function() { return this.value; }')
       end
 
       # @return [String|nil]
       def selected_text
-        result = client.send_message('Runtime.callFunctionOn',
-                                     functionDeclaration: 'function() {
+        evaluate_script('function() {
             const option = this.options[this.selectedIndex];
             return option ? option.textContent.trim() : null;
-          }',
-                                     objectId: @object_id)
-        result.dig('result', 'value')
+          }')
       end
 
       private

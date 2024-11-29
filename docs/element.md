@@ -74,6 +74,19 @@ Returns a hash of the element's attributes.
   puts "Element attributes: #{attributes}"
   ```
 
+#### `#tag_name`
+
+Gets the HTML tag name of the element in lowercase.
+
+- **Returns:**
+  - `String`: The HTML tag name.
+
+- **Example:**
+  ```ruby
+  tag = element.tag_name
+  puts "Tag name: #{tag}"
+  ```
+
 #### `#set_attribute(name, value)`
 
 Sets an attribute on the element.
@@ -281,6 +294,19 @@ Finds all child elements inside the shadow root using the given selector.
   ```ruby
   shadow_elements = element.find_shadow_children('.shadow-item')
   shadow_elements.each { |el| puts el.text }
+  ```
+
+#### `#value`
+
+Gets the value of the element.
+
+- **Returns:**
+  - `String`: The element's value.
+
+- **Example:**
+  ```ruby
+  value = element.value
+  puts "Element value: #{value}"
   ```
 
 ### Exceptions

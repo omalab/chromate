@@ -51,14 +51,12 @@ module Chromate
 
     # @return [String]
     def text
-      result = client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { return this.innerText; }', objectId: @object_id)
-      result['result']['value']
+      evaluate_script('function() { return this.innerText; }')
     end
 
     # @return [String]
     def value
-      result = client.send_message('Runtime.callFunctionOn', functionDeclaration: 'function() { return this.value; }', objectId: @object_id)
-      result['result']['value']
+      evaluate_script('function() { return this.value; }')
     end
 
     # @return [String]
@@ -75,10 +73,7 @@ module Chromate
 
     # @return [String]
     def tag_name
-      result = client.send_message('Runtime.callFunctionOn',
-                                   functionDeclaration: 'function() { return this.tagName.toLowerCase(); }',
-                                   objectId: @object_id)
-      result['result']['value']
+      evaluate_script('function() { return this.tagName.toLowerCase(); }')
     end
 
     # @param [String] name
@@ -214,6 +209,19 @@ module Chromate
       end
     end
 
+    # @param [String] script
+    # @return [String]
+    def evaluate_script(script, options = {})
+      result = client.send_message(
+        'Runtime.callFunctionOn',
+        functionDeclaration: script,
+        objectId: @object_id,
+        returnByValue: true,
+        **options
+      )
+      result['result']['value']
+    end
+
     private
 
     # @param [String] event
@@ -258,10 +266,15 @@ module Chromate
       nil
     end
 
+    # @return [Hash]
     def document
       @document ||= client.send_message('DOM.getDocument')
     end
 
+    # Allows to submit the parent form of the element
+    # can be used to submit a form
+    #
+    # @return [void]
     def submit_parent_form
       script = <<~JAVASCRIPT
         function() {
@@ -278,9 +291,7 @@ module Chromate
         }
       JAVASCRIPT
 
-      client.send_message('Runtime.callFunctionOn',
-                          functionDeclaration: script,
-                          objectId: @object_id)
+      evaluate_script(script)
     end
   end
 end
