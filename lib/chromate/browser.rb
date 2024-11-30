@@ -70,9 +70,8 @@ module Chromate
       Hardwares::MouseController.reset_mouse_position
       Chromate::CLogger.log("Starting browser with args: #{@args}", level: :debug)
       @binary = Binary.new(@chrome_path, @args)
-      @binary.start
-      sleep 2
 
+      @binary.start
       @client.start
 
       start_video_recording if @record

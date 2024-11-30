@@ -19,18 +19,18 @@ module Chromate
       browser = args[:client].browser
       if browser.options[:native_control]
         if mac?
-          Chromate::CLogger.log('🐁 Loading MacOs mouse controller')
+          Chromate::CLogger.log('👨🏼‍💻🐁 Loading MacOs mouse controller')
           require 'chromate/hardwares/mouses/mac_os_controller'
           return Mouses::MacOsController.new(**args)
         end
         if linux?
-          Chromate::CLogger.log('🐁 Loading Linux mouse controller')
+          Chromate::CLogger.log('👨🏼‍💻🐁 Loading Linux mouse controller')
           require 'chromate/hardwares/mouses/linux_controller'
           return Mouses::LinuxController.new(**args)
         end
         raise 'Native mouse controller is not supported on Windows' if windows?
       else
-        Chromate::CLogger.log('🐁 Loading Virtual mouse controller')
+        Chromate::CLogger.log('🤖🐁 Loading Virtual mouse controller')
         Mouses::VirtualController.new(**args)
       end
     end
@@ -41,7 +41,7 @@ module Chromate
     # @option args [Chromate::Element] :element
     # @return [Chromate::Hardwares::KeyboardController]
     def keyboard(**args)
-      Chromate::CLogger.log('⌨️ Loading Virtual keyboard controller')
+      Chromate::CLogger.log('🤖⌨️ Loading Virtual keyboard controller')
       Keyboards::VirtualController.new(**args)
     end
     module_function :keyboard
