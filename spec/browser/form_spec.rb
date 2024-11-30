@@ -18,7 +18,7 @@ RSpec.describe 'Form' do
     select_tag = browser.find_element('#gender')
     select_tag.select_option('other')
     expect(select_tag.selected_value).to eq('other')
-    expect(select_tag.selected_text).to eq('Autre')
+    expect(select_tag.selected_text).to eq('Other')
 
     # Contact
     browser.find_element('#email').type('john.doe@example.com')
@@ -35,7 +35,7 @@ RSpec.describe 'Form' do
     # Submit form
     browser.find_element('button[type="submit"]').click
     message = browser.find_element('#confirmation-message')
-    expect(message.text).to include('Profil créé avec succès')
+    expect(message.text).to include('Profile created successfully!')
 
     # Capture screenshot
     browser.screenshot('spec/apps/fill_form/profile_form.png')

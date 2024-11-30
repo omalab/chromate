@@ -29,8 +29,11 @@ module Chromate
         JAVASCRIPT
 
         result = evaluate_script(script)
+        # TODO: fix this
+        # The offset is due to the fact that the option return the wrong coordinates
+        # can be fixed by mesuring an option and use the offset multiply by the index of the option
         {
-          'content' => [result['x'], result['y']],
+          'content' => [result['x'] + 100, result['y'] + 100],
           'width' => result['width'],
           'height' => result['height']
         }

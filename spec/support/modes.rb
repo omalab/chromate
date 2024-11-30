@@ -12,11 +12,19 @@ module Support
       FileUtils.mkdir_p(USER_DATA_DIR)
 
       case ENV.fetch('CHROMATE_MODE', nil)
+      when 'local-x'
+        {
+          headless: false,
+          xfvb: false,
+          native_control: true,
+          record: "spec/video-records/#{example_name}.mp4",
+          user_data_dir: USER_DATA_DIR
+        }
       when 'docker-xvfb'
         {
           headless: false,
           xfvb: true,
-          native_control: false,
+          native_control: true,
           record: "spec/video-records/#{example_name}.mp4",
           user_data_dir: USER_DATA_DIR
         }

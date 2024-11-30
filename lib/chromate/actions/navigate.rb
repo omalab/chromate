@@ -27,12 +27,15 @@ module Chromate
             case message['method']
             when 'Page.domContentEventFired'
               dom_content_loaded = true
+              Chromate::CLogger.log('DOMContentEventFired')
               condition.signal if dom_content_loaded && page_loaded && frame_stopped_loading
             when 'Page.loadEventFired'
               page_loaded = true
+              Chromate::CLogger.log('LoadEventFired')
               condition.signal if dom_content_loaded && page_loaded && frame_stopped_loading
             when 'Page.frameStoppedLoading'
               frame_stopped_loading = true
+              Chromate::CLogger.log('FrameStoppedLoading')
               condition.signal if dom_content_loaded && page_loaded && frame_stopped_loading
             end
           end

@@ -32,6 +32,8 @@ module Chromate
       # @return [self]
       def type(text)
         text.each_char do |char|
+          sleep(rand(0.01..0.05)) if rand(10).zero?
+
           press_key(char)
           sleep(@type_interval)
         end
