@@ -1,12 +1,30 @@
 # [Unreleased]
 
 ## 🚀 Features
-- **Add keyboard actions**: Implemented keyboard interactions, including typing and key pressing.
-- **Add drag and drop action**: Implemented drag and drop bewteen elements
+- **Add specialized elements**: Added support for Select, Radio, and Checkbox elements with specific behaviors
+
+## 🛠 Core Enhancements
+- **Optimize element initialization**: Reduced redundant element searches by reusing element information
+- **Add native option select**: Added support for native select option handling
+- **Improve element attributes**: Exposed element attributes (node_id, object_id, root_id) for better control
+- **Add BotBrowser binary usage**: Integrated BotBrowser binary for improved automation capabilities
+
+# Changelog v0.0.2.pre
+
+## 🚀 Features
+- **Add keyboard actions**: Implemented keyboard interactions, including typing and key pressing
+- **Add drag and drop action**: Implemented drag and drop between elements
+- **Add b64 screenshot option**: Added support for base64 encoded screenshots
 
 ## 🛠 Core Enhancements
 - **Improve mouse movements**: Keep mouse position between interaction during browser session
 - **Improve mouse movements**: Improving Bézier curve usage for more human like behavior
+- **Add log level**: Added configurable logging levels
+- **Keep hardwares during session**: Maintain hardware state throughout the browser session
+- **Add magick find**: Enhanced element finding capabilities
+- **Refactor callFunctionOn usage**: Improved JavaScript function calling mechanism
+- **Add started? method**: New method to check browser startup status
+- **Wait for debug url**: Enhanced browser startup synchronization
 
 # Changelog v0.0.1.pre
 
