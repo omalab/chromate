@@ -15,6 +15,43 @@ element = Chromate::Element.new(selector, client, node_id: nil, object_id: nil, 
   - `object_id` (String, optional): The object ID of the element.
   - `root_id` (Integer, optional): The root node ID of the document.
 
+### Attributes
+
+#### `#selector`
+
+Returns the CSS selector used to locate the element.
+
+- **Returns:**
+  - `String`: The CSS selector.
+
+#### `#client`
+
+Returns the CDP client instance used to communicate with the browser.
+
+- **Returns:**
+  - `Chromate::Client`: The CDP client instance.
+
+#### `#root_id`
+
+Returns the root node ID of the document.
+
+- **Returns:**
+  - `Integer`: The root node ID.
+
+#### `#object_id`
+
+Returns the object ID of the element.
+
+- **Returns:**
+  - `String`: The object ID.
+
+#### `#node_id`
+
+Returns the node ID of the element.
+
+- **Returns:**
+  - `Integer`: The node ID.
+
 ### Public Methods
 
 #### `#mouse`
@@ -313,3 +350,16 @@ Gets the value of the element.
 
 - `NotFoundError`: Raised when an element cannot be found with the given selector.
 - `InvalidSelectorError`: Raised when the selector cannot resolve to a valid element.
+
+## Specialized Elements
+
+Chromate provides specialized element classes for specific HTML elements that have unique behaviors and methods. When using `find_element`, Chromate automatically returns the appropriate specialized element based on the element type.
+
+### Available Specialized Elements
+
+- [Select Element](elements/select.md): For `<select>` elements
+- [Option Element](elements/option.md): For `<option>` elements within select elements
+- [Radio Element](elements/radio.md): For radio button inputs (`<input type="radio">`)
+- [Checkbox Element](elements/checkbox.md): For checkbox inputs (`<input type="checkbox">`)
+
+Each specialized element inherits from the base `Element` class and adds specific methods for interacting with that type of element. See the individual documentation files for details on the methods available for each element type.

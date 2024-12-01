@@ -13,8 +13,16 @@ module Chromate
         tag_name == 'option'
       end
 
+      def radio?
+        tag_name == 'input' && attributes['type'] == 'radio'
+      end
+
+      def checkbox?
+        tag_name == 'input' && attributes['type'] == 'checkbox'
+      end
+
       def base?
-        !select? && !option?
+        !select? && !option? && !radio? && !checkbox?
       end
     end
   end

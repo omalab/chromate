@@ -12,12 +12,23 @@ module Chromate
       # @return [Chromate::Element]
       def find_element(selector)
         base_element = Chromate::Element.new(selector, @client)
-        return base_element if base_element.base?
+
+        options = {
+          object_id: base_element.object_id,
+          node_id: base_element.node_id,
+          root_id: base_element.root_id
+        }
 
         if base_element.select?
-          Chromate::Elements::Select.new(selector, @client)
+          Chromate::Elements::Select.new(selector, @client, **options)
         elsif base_element.option?
-          Chromate::Elements::Option.new(base_element.value, @client)
+          Chromate::Elements::Option.new(selector, @client, **options)
+        elsif base_element.radio?
+          Chromate::Elements::Radio.new(selector, @client, **options)
+        elsif base_element.checkbox?
+          Chromate::Elements::Checkbox.new(selector, @client, **options)
+        else
+          base_element
         end
       end
 
