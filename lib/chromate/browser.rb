@@ -53,8 +53,6 @@ module Chromate
 
       trap('INT') { stop_and_exit }
       trap('TERM') { stop_and_exit }
-
-      at_exit { stop }
     end
 
     # @return [self]
@@ -89,13 +87,13 @@ module Chromate
 
     # @return [Boolean]
     def started?
-      @binary.started?
+      @binary&.started? || false
     end
 
     # @return [self]
     def stop
       stop_process(@record_process) if @record_process
-      @binary.stop                  if @binary&.started?
+      @binary.stop                  if started?
       @client&.stop
 
       @binary = nil
@@ -190,7 +188,6 @@ module Chromate
         # If the process does not stop gracefully, send SIGKILL
         CLogger.log("Process #{pid} did not stop gracefully. Sending SIGKILL...", level: :debug)
         Process.kill('KILL', pid)
-        Process.wait(pid)
       end
     rescue Errno::ESRCH
       # The process has already stopped
