@@ -9,7 +9,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_clicked']
     browser.navigate_to(url)
-    browser.click_element('#interactive-button')
+    browser.find_element('#interactive-button').click
     browser.screenshot('spec/apps/where_clicked/click.png')
 
     browser.stop
@@ -20,7 +20,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#red')
+    browser.find_element('#red').hover
     browser.screenshot('spec/apps/where_moved/hover_element_red.png')
 
     browser.stop
@@ -31,7 +31,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#blue')
+    browser.find_element('#blue').hover
     browser.screenshot('spec/apps/where_moved/hover_element_blue.png')
 
     browser.stop
@@ -42,7 +42,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#green')
+    browser.find_element('#green').hover
     browser.screenshot('spec/apps/where_moved/hover_element_green.png')
 
     browser.stop
@@ -53,7 +53,7 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#yellow')
+    browser.find_element('#yellow').hover
     browser.screenshot('spec/apps/where_moved/hover_element_yellow.png')
 
     browser.stop
@@ -64,10 +64,10 @@ RSpec.describe 'Mouse' do
     browser.start
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#red')
-    browser.hover_element('#yellow')
-    browser.hover_element('#green')
-    browser.hover_element('#blue')
+    browser.find_element('#red').hover
+    browser.find_element('#yellow').hover
+    browser.find_element('#green').hover
+    browser.find_element('#blue').hover
     browser.screenshot('spec/apps/where_moved/hover_element_all.png')
 
     browser.stop

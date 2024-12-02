@@ -142,56 +142,6 @@ select.select_option('France')
 
 See the [Element documentation](element.md) for more details about specialized elements.
 
-#### `#click_element(selector)`
-
-Finds an element by selector and clicks it.
-
-- **Parameters:**
-  - `selector` (String): The CSS selector of the element to click.
-
-- **Example:**
-  ```ruby
-  browser.click_element('#submit-button')
-  ```
-
-#### `#hover_element(selector)`
-
-Finds an element by selector and hovers over it.
-
-- **Parameters:**
-  - `selector` (String): The CSS selector of the element to hover.
-
-- **Example:**
-  ```ruby
-  browser.hover_element('#hover-target')
-  ```
-
-#### `#type_text(selector, text)`
-
-Finds an element by selector and types the specified text into it.
-
-- **Parameters:**
-  - `selector` (String): The CSS selector of the element.
-  - `text` (String): The text to type into the element.
-
-- **Example:**
-  ```ruby
-  browser.type_text('#input-field', 'Hello, Chromate!')
-  ```
-
-#### `#select_option(selector, option)`
-
-Selects an option from a dropdown element.
-
-- **Parameters:**
-  - `selector` (String): The CSS selector of the dropdown element.
-  - `option` (String): The value of the option to select.
-
-- **Example:**
-  ```ruby
-  browser.select_option('#dropdown', 'option2')
-  ```
-
 #### `#evaluate_script(script)`
 
 Executes the specified JavaScript expression on the page.

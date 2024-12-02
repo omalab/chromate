@@ -14,7 +14,6 @@ RSpec.describe 'Form' do
     browser.find_element('#first-name').type('John')
     browser.find_element('#last-name').type('Doe')
     browser.find_element('#birthdate').type('15/05/1990')
-    # browser.select_option('#gender', 'other')
     select_tag = browser.find_element('#gender')
     select_tag.select_option('other')
     expect(select_tag.selected_value).to eq('other')

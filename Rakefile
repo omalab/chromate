@@ -57,7 +57,7 @@ namespace :chromate do
       browser.start
       browser.navigate_to("https://kaliiiiiiiiii.github.io/brotector")
       sleep 2
-      browser.click_element("#clickHere")
+      browser.find_element("#clickHere").click
       sleep 3
       browser.screenshot("results/brotector.png")
       browser.stop
@@ -86,7 +86,7 @@ namespace :chromate do
       browser.start
       browser.navigate_to("https://whatismyipaddress.com")
       sleep 2
-      browser.click_element('//*[@id="qc-cmp2-ui"]/div[2]/div/button[3]')
+      browser.find_element('//*[@id="qc-cmp2-ui"]/div[2]/div/button[3]').click
       browser.screenshot("results/my_ip.png")
       browser.stop
     end

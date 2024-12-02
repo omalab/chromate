@@ -40,17 +40,17 @@ class TestInDocker
   def click_features
     url = server_urls['where_clicked']
     browser.navigate_to(url)
-    browser.click_element('#interactive-button')
+    browser.find_element('#interactive-button').click
     sleep 1
   end
 
   def move_features
     url = server_urls['where_moved']
     browser.navigate_to(url)
-    browser.hover_element('#red')
-    browser.hover_element('#yellow')
-    browser.hover_element('#green')
-    browser.hover_element('#blue')
+    browser.find_element('#red').hover
+    browser.find_element('#yellow').hover
+    browser.find_element('#green').hover
+    browser.find_element('#blue').hover
     sleep 1
   end
 
@@ -68,7 +68,7 @@ class TestInDocker
     browser.navigate_to(url)
     browser.find_element('#first-name').type('John')
     browser.find_element('#last-name').type('Doe')
-    browser.select_option('#gender', 'female')
+    browser.find_element('#gender').select_option('female')
     browser.find_element('#option-2').click
     browser.find_element('#submit-button').click
     sleep 1

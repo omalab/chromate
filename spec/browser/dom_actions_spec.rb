@@ -52,7 +52,7 @@ RSpec.describe 'Dom actions' do
   end
 
   it 'selects an option from a dropdown' do
-    browser.select_option('#test-select', 'option2')
+    browser.find_element('#test-select').select_option('option2')
 
     result = browser.find_element('#select-result')
     expect(result.text).to eq('Selected option: option2')
