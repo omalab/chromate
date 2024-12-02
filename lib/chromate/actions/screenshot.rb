@@ -93,12 +93,15 @@ module Chromate
       def make_screenshot(options = {})
         default_options = {
           format: 'png',
-          fromSurface: true
+          fromSurface: true,
+          captureBeyondViewport: true
         }
 
         params = default_options.merge(options)
 
         @client.send_message('Page.enable')
+        @client.send_message('DOM.enable')
+        @client.send_message('DOM.getDocument', depth: -1, pierce: true)
 
         result = @client.send_message('Page.captureScreenshot', params)
 
