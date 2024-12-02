@@ -62,4 +62,19 @@ RSpec.describe 'Dom actions' do
     result = browser.evaluate_script('document.title')
     expect(result).to eq('Chromate Actions Test Page')
   end
+
+  it 'gets the source of the page' do
+    source = browser.source
+    expect(source).to include('<title>Chromate Actions Test Page</title>')
+  end
+
+  it 'captures a screenshot' do
+    screenshot = browser.screenshot
+    expect(screenshot).to match(hash_including(path: kind_of(String), base64: kind_of(String)))
+  end
+
+  it 'captures a screenshot of the full page' do
+    screenshot = browser.screenshot(nil, full_page: true)
+    expect(screenshot).to match(hash_including(path: kind_of(String), base64: kind_of(String)))
+  end
 end

@@ -5,19 +5,30 @@ module Chromate
     module Screenshot
       # @param file_path [String] The path to save the screenshot to
       # @param options [Hash] Options for the screenshot
-      # @option options [String] :format The format of the screenshot
+      # @option options [String] :format The format of the screenshot (default: 'png')
       # @option options [Boolean] :full_page Whether to take a screenshot of the full page
       # @option options [Boolean] :fromSurface Whether to take a screenshot from the surface
-      # @return [Boolean] Whether the screenshot was successful
+      # @return [Hash] A hash containing the path and base64-encoded image data of the screenshot
       def screenshot(file_path = "#{Time.now.to_i}.png", options = {})
+        file_path ||= "#{Time.now.to_i}.png"
         return xvfb_screenshot(file_path) if @xfvb
-        return screenshot_full_page(file_path, options) if options.delete(:full_page)
+
+        if options[:full_page]
+          original_viewport = fetch_viewport_size
+          update_screen_size_to_full_page!
+        end
 
         image_data = make_screenshot(options)
-        return image_data if options[:base64]
+        reset_screen_size! if options[:full_page]
 
         File.binwrite(file_path, image_data)
-        true
+
+        {
+          path: file_path,
+          base64: Base64.encode64(image_data)
+        }
+      ensure
+        restore_viewport_size(original_viewport) if options[:full_page]
       end
 
       private
@@ -29,13 +40,10 @@ module Chromate
         system("xwd -root -display #{display} | convert xwd:- #{file_path}")
       end
 
-      # @param file_path [String] The path to save the screenshot to
-      # @param options [Hash] Options for the screenshot
-      # @option options [String] :format The format of the screenshot
-      # @return [Boolean] Whether the screenshot was successful
-      def screenshot_full_page(file_path, options = {})
+      # Updates the screen size to match the full page dimensions
+      # @return [void]
+      def update_screen_size_to_full_page!
         metrics = @client.send_message('Page.getLayoutMetrics')
-
         content_size = metrics['contentSize']
         width = content_size['width'].ceil
         height = content_size['height'].ceil
@@ -46,10 +54,36 @@ module Chromate
                                height: height,
                                deviceScaleFactor: 1
                              })
+      end
 
-        screenshot(file_path, options)
-
+      # Resets the device metrics override
+      # @return [void]
+      def reset_screen_size!
         @client.send_message('Emulation.clearDeviceMetricsOverride')
+      end
+
+      # Fetches the current viewport size
+      # @return [Hash] The current viewport dimensions
+      def fetch_viewport_size
+        metrics = @client.send_message('Page.getLayoutMetrics')
+        {
+          width: metrics['layoutViewport']['clientWidth'],
+          height: metrics['layoutViewport']['clientHeight']
+        }
+      end
+
+      # Restores the viewport size to its original dimensions
+      # @param viewport [Hash] The original viewport dimensions
+      # @return [void]
+      def restore_viewport_size(viewport)
+        return unless viewport
+
+        @client.send_message('Emulation.setDeviceMetricsOverride', {
+                               mobile: false,
+                               width: viewport[:width],
+                               height: viewport[:height],
+                               deviceScaleFactor: 1
+                             })
       end
 
       # @param options [Hash] Options for the screenshot
