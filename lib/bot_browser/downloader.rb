@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Special thanks to the BotBrowser project (https://github.com/MiddleSchoolStudent/BotBrowser)
+# for providing an amazing foundation for browser automation and making this work possible.
+
 require 'chromate/binary'
 
 module BotBrowser
