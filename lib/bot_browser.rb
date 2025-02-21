@@ -10,8 +10,12 @@ module BotBrowser
       Installer.install(version)
     end
 
+    def uninstall
+      Installer.uninstall
+    end
+
     def installed?
-      File.exist?("#{Dir.home}/.botbrowser/config.yml")
+      Installer.installed?
     end
 
     def load

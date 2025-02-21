@@ -27,6 +27,11 @@ module BotBrowser
 
       def versions
         {
+          v132: {
+            mac: 'https://github.com/MiddleSchoolStudent/BotBrowser/releases/download/20250204/botbrowser_132.0.6834.84_mac_arm64.dmg',
+            linux: 'https://github.com/MiddleSchoolStudent/BotBrowser/releases/download/20250204/botbrowser_132.0.6834.84_amd64.deb',
+            windows: 'https://github.com/MiddleSchoolStudent/BotBrowser/releases/download/20250204/botbrowser_132.0.6834.84_win_x86_64.7z'
+          },
           v130: {
             mac: 'https://github.com/MiddleSchoolStudent/BotBrowser/releases/download/v130/botbrowser_130.0.6723.92_mac_arm64.dmg',
             linux: 'https://github.com/MiddleSchoolStudent/BotBrowser/releases/download/v130/botbrowser_130.0.6723.117_amd64.deb',
@@ -47,6 +52,10 @@ module BotBrowser
           v130: {
             mac: 'https://raw.githubusercontent.com/MiddleSchoolStudent/BotBrowser/refs/heads/main/profiles/v130/chrome130_mac_arm64.enc',
             iphone: 'https://raw.githubusercontent.com/MiddleSchoolStudent/BotBrowser/refs/heads/main/profiles/v130/chrome130_iphone.enc'
+          },
+          v132: {
+            mac: 'https://github.com/MiddleSchoolStudent/BotBrowser/blob/main/profiles/v132/chrome132_mac_arm64.enc',
+            win: 'https://github.com/MiddleSchoolStudent/BotBrowser/blob/main/profiles/v132/chrome132_win10_x86_64.enc'
           }
         }
       end

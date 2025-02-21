@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require 'yaml'
 require 'chromate/helpers'
 require 'chromate/c_logger'
 require 'bot_browser/downloader'
 
 module BotBrowser
   class Installer
+    class NotInstalledError < StandardError; end
     class << self
       include Chromate::Helpers
 
@@ -20,6 +22,22 @@ module BotBrowser
 
       def config_dir
         "#{Dir.home}/.botbrowser"
+      end
+
+      def installed?
+        File.exist?("#{config_dir}/config.yml")
+      end
+
+      def uninstall
+        raise NotInstalledError, 'BotBrowser is not installed' unless installed?
+
+        config = YAML.load_file("#{config_dir}/config.yml")
+        Chromate::CLogger.log("Uninstalling binary at #{config["bot_browser_path"]}")
+        FileUtils.rm_rf(config['bot_browser_path'])
+        Chromate::CLogger.log("Uninstalling profile at #{config["profile"]}")
+        FileUtils.rm_rf(config['profile'])
+        FileUtils.rm_rf(config_dir)
+        Chromate::CLogger.log('Uninstalled')
       end
 
       private
