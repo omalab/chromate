@@ -1,45 +1,60 @@
 # frozen_string_literal: true
 
+require 'user_agent_parser'
+
 module Chromate
   module Actions
     module Stealth
       # @return [void]
-      def patch # rubocop:disable Metrics/MethodLength
+      def patch
         @client.send_message('Network.enable')
+        inject_stealth_script
 
-        # Define custom headers
+        # TODO: Improve dynamic user agent overriding
+        # It currently breaks fingerprint validation (pixcelscan.com)
+        # override_user_agent(@user_agent)
+      end
+
+      # @return [void]
+      def inject_stealth_script
+        stealth_script = File.read(File.join(__dir__, '../files/stealth.js'))
+        @client.send_message('Page.addScriptToEvaluateOnNewDocument', { source: stealth_script })
+      end
+
+      # @param user_agent [String]
+      # @return [void]
+      def override_user_agent(user_agent) # rubocop:disable Metrics/MethodLength
+        u_agent     = UserAgentParser.parse(user_agent)
+        platform    = Chromate::UserAgent.os
+        version     = u_agent.version
+        brands      = [
+          { brand: u_agent.family || 'Not_A_Brand', version: version.major },
+          { brand: u_agent.device.brand || 'Not_A_Brand', version: u_agent.os.version.to_s }
+        ]
+
         custom_headers = {
-          'User-Agent' => UserAgent.call,
-          'Accept-Language' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,und;q=0.6,es;q=0.5,pt;q=0.4',
-          'Sec-CH-UA' => '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-          'Sec-CH-UA-Platform' => '"' + UserAgent.os + '"', # rubocop:disable Style/StringConcatenation
+          'User-Agent' => user_agent,
+          'Accept-Language' => 'en-US,en;q=0.9',
+          'Sec-CH-UA' => brands.map { |brand| "\"#{brand[:brand]}\";v=\"#{brand[:version]}\"" }.join(', '),
+          'Sec-CH-UA-Platform' => "\"#{u_agent.device.family}\"",
           'Sec-CH-UA-Mobile' => '?0'
         }
-
-        # Apply custom headers
         @client.send_message('Network.setExtraHTTPHeaders', headers: custom_headers)
 
-        # Override User-Agent and high-entropy data to avoid fingerprinting
         user_agent_override = {
-          userAgent: UserAgent.call,
-          platform: UserAgent.os,
-          acceptLanguage: 'fr-FR,fr;q=0.9,en-US;q=0.8',
+          userAgent: user_agent,
+          platform: platform,
+          acceptLanguage: 'en-US,en;q=0.9',
           userAgentMetadata: {
-            brands: [
-              { brand: 'Google Chrome', version: '131' },
-              { brand: 'Chromium', version: '131' },
-              { brand: 'Not_A Brand', version: '24' }
-            ],
-            fullVersion: '131.0.0.0',
-            platform: UserAgent.os,
-            platformVersion: UserAgent.os_version,
-            architecture: 'x86_64',
+            brands: brands,
+            fullVersion: version.to_s,
+            platform: platform,
+            platformVersion: u_agent.os.version.to_s,
+            architecture: Chromate::UserAgent.arch,
             model: '',
             mobile: false
           }
         }
-
-        # Apply User-Agent override and high-entropy data
         @client.send_message('Network.setUserAgentOverride', user_agent_override)
       end
     end
