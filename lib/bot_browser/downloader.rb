@@ -12,7 +12,7 @@ module BotBrowser
         version ||= versions.keys.first
         profile ||= profiles[version].keys.first
         version       = version.to_sym
-        binary_path   = download_file(versions[version][platform], "/tmp/botbrowser_#{version}_#{platform}.dmg")
+        binary_path   = download_file(versions[version][platform], "/tmp/botbrowser_#{version}_#{platform}.#{extension(platform)}")
         profile_path  = download_file(profiles[version][profile], "/tmp/botbrowser_#{version}_#{platform}.json")
 
         [binary_path, profile_path]
@@ -23,6 +23,19 @@ module BotBrowser
         Chromate::Binary.run('curl', ['-L', url, '-o', path])
 
         path
+      end
+
+      def extension(platform)
+        case platform
+        when :mac
+          'dmg'
+        when :linux
+          'deb'
+        when :windows
+          '7z'
+        else
+          raise 'Unsupported platform'
+        end
       end
 
       def versions
