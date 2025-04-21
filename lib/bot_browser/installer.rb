@@ -89,7 +89,7 @@ module BotBrowser
         Chromate::Binary.run('dpkg', ['-i', binary_path])
         Chromate::Binary.run('apt-get', ['install', '-f'])
 
-        '/usr/bin/chromium'
+        '/usr/bin/chromium-browser'
       end
 
       def install_binary_windows(binary_path)
