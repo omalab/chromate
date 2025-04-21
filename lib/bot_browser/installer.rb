@@ -13,7 +13,7 @@ module BotBrowser
 
       def install(version = nil)
         create_config_dir
-        binary_path, profile_path = Downloader.download(version)
+        binary_path, profile_path = Downloader.download(version, nil, platform)
         bot_browser_path          = install_binary(binary_path)
         bot_browser_profile_path  = install_profile(profile_path)
 
@@ -41,6 +41,18 @@ module BotBrowser
       end
 
       private
+
+      def platform
+        if mac?
+          :mac
+        elsif linux?
+          :linux
+        elsif windows?
+          :windows
+        else
+          raise 'Unsupported platform'
+        end
+      end
 
       def install_binary(binary_path)
         Chromate::CLogger.log("Installing binary from #{binary_path}")
