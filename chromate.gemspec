@@ -42,7 +42,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ffi', '~> 1.17.0'
   spec.add_dependency 'user_agent_parser', '~> 2.18.0'
   spec.add_dependency 'websocket-client-simple', '~> 0.8.0'
-
+  spec.add_dependency 'base64', '~> 0.2.0'
+  spec.add_dependency 'json', '~> 2.8.0'
+  spec.add_dependency 'securerandom', '~> 0.2.0'
+  spec.add_dependency 'net-http', '~> 0.3.0'
+  spec.add_dependency 'logger', '~> 1.7.0'
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
   spec.metadata['rubygems_mfa_required'] = 'true'

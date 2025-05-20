@@ -66,13 +66,21 @@ module Chromate
       Process.kill('INT', pid)
       begin
         Timeout.timeout(timeout) do
-          Process.wait(pid)
+          begin
+            Process.wait(pid)
+          rescue Errno::ECHILD
+            # No child process to wait for; it's already been reaped
+          end
         end
       rescue Timeout::Error
         # If the process does not stop gracefully, send SIGKILL
         CLogger.log("Process #{pid} did not stop gracefully. Sending SIGKILL...", level: :debug)
         Process.kill('KILL', pid)
-        Process.wait(pid)
+        begin
+          Process.wait(pid)
+        rescue Errno::ECHILD
+          # No child process to wait for; it's already been reaped
+        end
       end
     rescue Errno::ESRCH
       # The process has already stopped
